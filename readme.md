@@ -137,9 +137,9 @@ server/
 
 
 
-[ ] Register
-[ ] Login
-[ ] Me
+[ done ] Register
+[ done ] Login
+[ done ] Me
 [ ] Create RFQ
 [ ] List RFQs
 [ ] RFQ Detail
@@ -153,3 +153,9 @@ server/
 [ ] Extension Logic
 [ ] Validation
 [ ] Error Handling
+
+
+{
+  "email":"san@gmail.com",
+  "password":"&Year122"
+}

@@ -1,12 +1,17 @@
-const jwt = require("jwtwebtoken");
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req,res,next)=>{
 // middleware has three arguements
 try{
     // header og the request contains the token
-    const header = jwt.header.authentication;
+    
+    const header = req.headers.authorization;
+    // console.log(req.headers);
 
-    if(!header || !header.startsWith("Bearer ")){
+    console.log("HEADER =", header);
+console.log("TYPE =", typeof header);
+console.log("CHARS =", [...header]);
+    if(!header || !header.startsWith("bearer ")){
         return res.status(401).json({
             success : false,
             message : "No Token Provided or the syntax is wrong"
@@ -22,6 +27,7 @@ try{
     req.user = decoded;
     next();
 }catch(err){
+    console.log(err);
     res.status(401).json({
         success : false,
         message : "Invalid Token"

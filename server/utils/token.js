@@ -1,4 +1,4 @@
-const jwt = require("jwtwebtoken");
+const jwt = require("jsonwebtoken");
 
 const generateToken = (user)=>{
     return jwt.sign(

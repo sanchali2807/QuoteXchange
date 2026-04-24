@@ -4,7 +4,7 @@ require("dotenv").config();
 const sequilize = require("./config/db");
 //import models 
 require("./models");
-
+const authRoutes = require("./routes/authRoutes");
 const app = express();
 
 app.use(cors({
@@ -35,6 +35,9 @@ const startServer = async()=>{
 
         await sequilize.sync();
         console.log("database synced");
+
+        //routes
+        app.use("/api/auth",authRoutes);
 
         app.listen(PORT,()=>{
             console.log(`Server is running on ${PORT}`);
