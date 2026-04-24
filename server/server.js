@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const sequilize = require("./config/db");
+//import models 
+require("./models");
 
 const app = express();
 
