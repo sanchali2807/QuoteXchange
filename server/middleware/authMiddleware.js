@@ -8,9 +8,9 @@ try{
     const header = req.headers.authorization;
     // console.log(req.headers);
 
-    console.log("HEADER =", header);
-console.log("TYPE =", typeof header);
-console.log("CHARS =", [...header]);
+// console.log("HEADER =", header);
+// console.log("TYPE =", typeof header);
+// console.log("CHARS =", [...header]);
     if(!header || !header.startsWith("bearer ")){
         return res.status(401).json({
             success : false,
