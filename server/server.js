@@ -5,6 +5,7 @@ const sequilize = require("./config/db");
 //import models 
 require("./models");
 const authRoutes = require("./routes/authRoutes");
+const rfqRoutes = require("./routes/rfqRoutes");
 const app = express();
 
 app.use(cors({
@@ -33,11 +34,12 @@ const startServer = async()=>{
         await sequilize.authenticate();
         console.log("Database Connected");
 
-        await sequilize.sync();
+        await sequilize.sync({ alter:true });
         console.log("database synced");
 
         //routes
         app.use("/api/auth",authRoutes);
+        app.use("/api/rfq",rfqRoutes);
 
         app.listen(PORT,()=>{
             console.log(`Server is running on ${PORT}`);

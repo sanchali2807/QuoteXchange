@@ -17,8 +17,9 @@ const RFQ = sequelize.define("RFQ",{
     },
     
     referenceId : {
-        type : DataTypes.INTEGER,
+        type : DataTypes.STRING,
         allowNull : false
+        
     },
 
     startTime : {
@@ -28,7 +29,8 @@ const RFQ = sequelize.define("RFQ",{
 
     endTime : {
         type : DataTypes.DATE,
-        allowNull : false
+        allowNull : false,
+        unique:true
     },
 
     forcedCloseTime : {
