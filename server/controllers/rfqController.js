@@ -5,8 +5,8 @@
 // xMinutes > 0 , yMinutes > 0
 
 const {RFQ,User} = require("../models");
-const {Op} = require("sequelize");
-
+// const {Op} = require("sequelize");
+const {addLog} = require("../services/logService");
 const generateReferenceId=()=>{
     return "RFQ - " + Date.now();
     // Date.now is used because Returns current timestamp in milliseconds 
@@ -66,11 +66,22 @@ const createRfq = async(req,res)=>{
         triggerType,
         buyerId : req.user.id
     });
+
+    await addLog(
+        rfq.id,
+        "RFQ_CREATED",
+        "RFQ created",
+        {
+            buyerId : req.user.id
+        }
+
+    )
     return res.status(200).json({
         success : true,
         message : "Successfully created a RFQ",
         rfq
     });
+    
 
     }catch(err){
         return res.status(500).json({

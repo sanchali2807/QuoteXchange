@@ -16,12 +16,19 @@ const getAuctionStatus=(rfq)=>{
     }
     
 }
-const isInsideTriggerWindow=(rfq)=>{
+const isInsideTriggerWindow = (rfq) => {
     const now = new Date();
     const close = new Date(rfq.endTime);
-    const diffTime = (close - now) / (1000 * 60); // converts milliseconds to minutes
-    return diffTime <= rfq.xMinutes && diffTime >= 0;
 
+    console.log("NOW:", now);
+    console.log("CLOSE:", close);
+
+    const diffTime = (close - now) / (1000 * 60);
+
+    console.log("DIFF MIN:", diffTime);
+    console.log("X MIN:", rfq.xMinutes);
+
+    return diffTime <= rfq.xMinutes && diffTime >= 0;
 }
 
 const checkAndExtendAuction = async(rfqId,oldRank,newRank,prevL1,currL1)=>{
@@ -36,12 +43,12 @@ const checkAndExtendAuction = async(rfqId,oldRank,newRank,prevL1,currL1)=>{
     if(!isInsideTriggerWindow(rfq))return false;
 
     const oldOrder = oldRank.join(",");
-    const neworder = newRank.join(",");
-    const orderChanged = oldOrder !== neworder;
+    const newOrder = newRank.join(",");
+    const orderChanged = oldOrder !== newOrder;
     
     const L1Changed = prevL1 !== currL1;
 
-    const canBeExtended = false;
+    let shouldExtend = false;
 
     switch (rfq.triggerType){
            case "BID_LAST_X":
@@ -69,7 +76,7 @@ const checkAndExtendAuction = async(rfqId,oldRank,newRank,prevL1,currL1)=>{
     )
 
     if(newClose > forced){
-        forced = newClose
+         newClose = forced
     }
     await rfq.update({
         endTime : newClose
