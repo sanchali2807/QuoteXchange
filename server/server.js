@@ -6,6 +6,7 @@ const sequilize = require("./config/db");
 require("./models");
 const authRoutes = require("./routes/authRoutes");
 const rfqRoutes = require("./routes/rfqRoutes");
+const bidRoutes = require("./routes/bidRoutes");
 const app = express();
 
 app.use(cors({
@@ -40,6 +41,7 @@ const startServer = async()=>{
         //routes
         app.use("/api/auth",authRoutes);
         app.use("/api/rfq",rfqRoutes);
+        app.use("/api/rfq",bidRoutes);
 
         app.listen(PORT,()=>{
             console.log(`Server is running on ${PORT}`);

@@ -140,11 +140,11 @@ server/
 [ done ] Register
 [ done ] Login
 [ done ] Me
-[ ] Create RFQ
-[ ] List RFQs
-[ ] RFQ Detail
-[ ] Update RFQ
-[ ] Delete RFQ
+[ done ] Create RFQ
+[ done ] List RFQs
+[ done ] RFQ Detail
+[ done ] Update RFQ
+[ done ] Delete RFQ
 [ ] Submit Bid
 [ ] List Bids
 [ ] Logs
@@ -158,4 +158,19 @@ server/
 {
   "email":"san@gmail.com",
   "password":"&Year122"
+}
+
+{
+  "email": "supplier1@gmail.com",
+  "password": "&Year111"
+}
+
+{
+   "email": "supplier2@gmail.com",
+  "password": "&Year222"
+}
+
+{
+  "email": "supplier3@gmail.com",
+  "password": "&Year333"
 }
