@@ -14,6 +14,38 @@ const generateReferenceId=()=>{
     // Date.now is used because Returns current timestamp in milliseconds 
 }
 
+const validateRfqInput = ({
+  name,
+  startTime,
+  endTime,
+  forcedCloseTime,
+  xMinutes,
+  yMinutes
+}) => {
+
+  if (!name || !startTime || !endTime || !forcedCloseTime) {
+    return "Required fields missing";
+  }
+
+  if (new Date(startTime) <= new Date()) {
+    return "Start time must be in future";
+  }
+
+  if (new Date(startTime) >= new Date(endTime)) {
+    return "Start time must be before close time";
+  }
+
+  if (new Date(endTime) >= new Date(forcedCloseTime)) {
+    return "Forced close must be later than close time";
+  }
+
+  if (Number(xMinutes) <= 0 || Number(yMinutes) <= 0) {
+    return "X and Y minutes must be positive";
+  }
+
+  return null;
+};
+
 // CREATE RFQ
 const createRfq = async(req,res)=>{
     try{
@@ -28,34 +60,14 @@ const createRfq = async(req,res)=>{
             triggerType
         } = req.body;
 
-        if (!name || !startTime || !endTime || !forcedCloseTime) {
-      return res.status(400).json({
-        success: false,
-        message: "Required fields missing"
-      });
-    }
+       const error = validateRfqInput(req.body);
 
-    if (new Date(startTime) >= new Date(endTime)) {
-      return res.status(400).json({
-        success: false,
-        message: "Start time must be before close time"
-      });
-    }
-
-    if (new Date(endTime) >= new Date(forcedCloseTime)) {
-      return res.status(400).json({
-        success: false,
-        message: "Forced close must be later than close time"
-      });
-    }
-
-    if (xMinutes <= 0 || yMinutes <= 0) {
-      return res.status(400).json({
-        success: false,
-        message: "X and Y minutes must be positive"
-      });
-    }
-
+if (error) {
+  return res.status(400).json({
+    success: false,
+    message: error
+  });
+}
     const rfq = await RFQ.create({
         name,
         referenceId : generateReferenceId(),
@@ -175,6 +187,20 @@ const updateRfq = async(req,res)=>{
                 message : "Not your Rfq to update"
             })
         }
+        const mergedData = {
+            ...rfq.dataValues,
+            ...req.body
+            };
+            // The ... copies all key-value pairs into the new object.
+
+            const error = validateRfqInput(mergedData);
+
+            if (error) {
+            return res.status(400).json({
+                success: false,
+                message: error
+            });
+            }
         await rfq.update(req.body);
         return res.status(200).json({
             success : true,

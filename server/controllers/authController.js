@@ -24,15 +24,6 @@ if (!emailRegex.test(email)) {
   });
 }
 
-const existingEmail =await User.findOne({
-    where : {email}
-});
-if(existingEmail){
-    return res.status(400).json({
-    success: false,
-    message: "Email already registered"
-  });
-}
 
 // Password validation
 const passwordRegex =
@@ -111,7 +102,7 @@ const login = async(req,res)=>{
         )
 
     if(!matched){
-        return res.status(400),json({
+        return res.status(400).json({
             success : false,
             message : "Password not same"
         })
