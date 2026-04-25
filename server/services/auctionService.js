@@ -2,9 +2,11 @@ const { RFQ, Bid} = require("../models");
 
 const getAuctionStatus=(rfq)=>{
     const now = new Date();
+    const start = new Date(rfq.startTime);
     const close = new Date(rfq.endTime);
     const forcedClose = new Date(rfq.forcedCloseTime);
 
+    if (now < start) return "UPCOMING";
     if(now > forcedClose){
         return "FORCED CLOSED";
     }

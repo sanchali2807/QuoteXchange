@@ -4,9 +4,11 @@
 // closeTime > startTime
 // xMinutes > 0 , yMinutes > 0
 
-const {RFQ,User} = require("../models");
+const {RFQ,User,ActivityLog,Bid} = require("../models");
 // const {Op} = require("sequelize");
 const {addLog} = require("../services/logService");
+const { getAuctionStatus } = require("../services/auctionService");
+const { buildLeaderboard } = require("../services/LeaderboardService");
 const generateReferenceId=()=>{
     return "RFQ - " + Date.now();
     // Date.now is used because Returns current timestamp in milliseconds 
@@ -218,10 +220,86 @@ const deleteRfq = async (req,res)=>{
     }
 }
 
+//get auction listings
+const getAuctionListings = async(req,res)=>{
+    try{
+         console.log("STEP 1");
+        const rfqs = await RFQ.findAll({
+            order :[["createdAt","DESC"]]
+        })
+
+        // console.log("STEP 2", rfqs.length);/
+        const result = [];
+        for(const rfq of rfqs){
+            const leaderboard = await buildLeaderboard(rfq.id);
+            const lowestBid = leaderboard.length > 0 ? leaderboard[0].totalPrice : null;
+            result.push({
+                id : rfq.id,
+                name : rfq.name,
+                referenceId : rfq.referenceId,
+                endTime : rfq.endTime,
+                forcedCloseTime : rfq.forcedCloseTime,
+                status : getAuctionStatus(rfq),
+                lowestBid : lowestBid
+            }
+            )
+        }
+        return res.status(200).json({
+            success : true,
+            auctions : result
+            // data:rfqs
+        })
+    }catch(err){
+        return res.status(500).json({
+            message : err.message
+        })
+    }
+}
+
+const getRfqDetails= async(req,res)=>{
+    try{
+        const rfq = await RFQ.findByPk(req.params.id,{
+            include : [{
+                model : User,
+                attributes : ["id","name","companyName"]
+            }]
+        });
+
+        if(!rfq){
+            return res.status(404).json({
+                message : "RFQ not found"
+            })
+        }
+        const bids = await Bid.findAll({
+            where : {rfqId : rfq.id},
+            order : [["createdAt","DESC"]]
+        })
+        const leaderboard = await buildLeaderboard(rfq.id);
+
+        const logs = await ActivityLog.findAll({
+            where : {rfqId : rfq.id},
+            order : [["createdAt","DESC"]]
+        })
+        return res.status(200).json({
+            rfq,
+            bids,
+            leaderboard,
+            logs
+        })
+
+    }catch(err){
+        return res.status(500).json({
+            message : err.message
+        })
+    }
+}
+
 module.exports = {
     createRfq,
     getAllRfq,
     getRfqById,
     updateRfq,
-    deleteRfq
+    deleteRfq,
+    getAuctionListings,
+    getRfqDetails
 }

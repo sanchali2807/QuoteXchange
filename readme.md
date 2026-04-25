@@ -147,12 +147,12 @@ server/
 [ done ] Delete RFQ
 [ done ] Submit Bid
 [ done ] List Bids
-[ ] Logs
+[ done ] Logs
 [ ] Export PDF
 [ ] SSE Live
-[ ] Extension Logic
-[ ] Validation
-[ ] Error Handling
+[ done ] Extension Logic
+[ done ] Validation
+[ done ] Error Handling
 
 
 {
