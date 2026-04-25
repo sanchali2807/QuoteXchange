@@ -30,7 +30,6 @@ const RFQ = sequelize.define("RFQ",{
     endTime : {
         type : DataTypes.DATE,
         allowNull : false,
-        unique:true
     },
 
     forcedCloseTime : {

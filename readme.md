@@ -176,3 +176,9 @@ server/
 }
 
 The getLeaderboard() flow starts by fetching all bids for a specific RFQ using rfqId, along with supplier details from the User table. These bids are first ordered by supplierId ascending and createdAt descending so that each supplier’s newest bid appears first. Then the code loops through the bids and uses a Map to keep only the first bid of each supplier, which effectively means only their latest bid is retained while older bids are ignored. After that, the latest bids of all suppliers are converted into an array and sorted by totalPrice from lowest to highest, because the cheapest bid should rank first in a reverse auction. Finally, ranks like 1, 2, 3 are assigned based on sorted position and the completed leaderboard is returned in the API response.
+
+
+
+
+//buyer
+bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlNhbmNoYWxpIiwiZW1haWwiOiJzYW5AZ21haWwuY29tIiwicm9sZSI6ImJ1eWVyIiwiaWF0IjoxNzc3MTIzNTg3LCJleHAiOjE3Nzc3MjgzODd9.QfDnWhXuQXKHkEi1N0OzKzTjrcdcI33VN7yGcOM8o_0

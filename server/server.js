@@ -35,7 +35,7 @@ const startServer = async()=>{
         await sequilize.authenticate();
         console.log("Database Connected");
 
-        await sequilize.sync({ alter:true });
+        await sequilize.sync();
         console.log("database synced");
 
         //routes

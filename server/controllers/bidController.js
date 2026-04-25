@@ -7,7 +7,8 @@
 
 const { Model } = require("sequelize");
 const {Bid,RFQ,User} = require("../models");
-const getAuctionStatus = require("../services/auctionService");
+const {getAuctionStatus,checkAndExtendAuction}= require("../services/auctionService");
+const {buildLeaderboard} = require("../services/LeaderboardService")
 // const { USE } = require("sequelize/lib/index-hints");
 
 // SUBMIT BID
@@ -59,6 +60,14 @@ const createBid = async (req,res) =>{
         });
         }
 
+        //old board
+        const oldBoard = await buildLeaderboard(rfq.Id);
+        const oldRank = oldBoard.map(
+            item => item.supplierId
+        )
+        const prevL1 = oldBoard.length > 0 ? oldBoard[0].supplierId : null;
+
+        // save bid 
         const totalPrice = Number(freight) + Number(origin) + Number(destination);
 
         const bids = await Bid.create({
@@ -72,12 +81,26 @@ const createBid = async (req,res) =>{
             totalPrice
         })
 
-        await recalculateRank(rfq.id);
+        // new leader board
+        const newBoard = await buildLeaderboard(rfq.id);
+        const newRank =newBoard.map(
+            item => item.supplierId
+        )
+        const currL1 = newBoard.length > 0 ? newBoard[0].supplierId : null;
 
+        const extended = await checkAndExtendAuction(
+           { rfqId: rfq.Id,
+            oldRank,
+            newRank,
+            prevL1,
+            currl1
+        }
+        )
         return res.status(200).json({
             success : true,
             message : "Bid submitted",
-            bids
+            bids,
+            extended
         })
 
     }catch(Err){

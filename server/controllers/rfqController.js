@@ -75,7 +75,7 @@ const createRfq = async(req,res)=>{
     }catch(err){
         return res.status(500).json({
             success : false,
-            message : "Error Creating RFQ",
+            message : err.message
         })
     }
 }
