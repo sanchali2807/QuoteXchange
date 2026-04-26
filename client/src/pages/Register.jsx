@@ -34,11 +34,13 @@ export default function Register() {
 
       navigate("/");
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Registration failed"
-      );
-    } finally {
+  console.log(err);
+  setError(
+    err?.response?.data?.message ||
+    err?.message ||
+    "Registration failed"
+  );
+} finally {
       setLoading(false);
     }
   };
