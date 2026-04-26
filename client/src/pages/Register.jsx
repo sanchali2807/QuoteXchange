@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../api/axios";
-
+import BackButton from "../components/BackButton";
 export default function Register() {
   const navigate = useNavigate();
 

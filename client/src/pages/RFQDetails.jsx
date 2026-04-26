@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import axios from "../api/axios";
-
+import BackButton from "../components/BackButton";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
 export default function RFQDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { token } = useAuth();
 
 let role = "";
@@ -20,19 +21,49 @@ try {
 
   const [rfq, setRfq] = useState(null);
   const [bids, setBids] = useState([]);
-  const [price, setPrice] = useState("");
+const [form, setForm] = useState({
+  freight: "",
+  origin: "",
+  destination: "",
+  transitTime: "",
+  validity: "",
+});
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [history, setHistory] = useState([]);
+const [showHistory, setShowHistory] = useState(false);
+const [logs, setLogs] = useState([]);
 
-  useEffect(() => {
-    loadDetails();
-  }, []);
+useEffect(() => {
+  loadDetails();
+  loadLogs();
 
+  if (role === "supplier") {
+    loadHistory();
+  }
+}, []);
+
+const loadLogs = async () => {
+  try {
+    const res = await axios.get(`/rfq/${id}/logs`);
+
+    setLogs(
+      res.data.logs ||
+      res.data.data ||
+      res.data ||
+      []
+    );
+  } catch (err) {
+    console.log("Logs failed");
+  }
+};
   const loadDetails = async () => {
   try {
     const detailsRes = await axios.get(`/rfq/${id}/details`);
     const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
+    // const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
+console.log("Leaderboard:", boardRes.data);
 
     setRfq(
       detailsRes.data.rfq ||
@@ -54,20 +85,43 @@ try {
   }
 };
 
-  const submitBid = async (e) => {
-    e.preventDefault();
+const loadHistory = async () => {
+  try {
+    const res = await axios.get(`/rfq/${id}/bids`);
 
-    try {
-      await axios.post(`/rfq/${id}/bids`, {
-        totalPrice: price,
-      });
+    setHistory(
+      res.data.bids ||
+      res.data.data ||
+      res.data ||
+      []
+    );
 
-      setPrice("");
-      loadDetails();
-    } catch (err) {
-      alert("Bid failed");
-    }
-  };
+    setShowHistory(true);
+  } catch (err) {
+    alert("Failed to load history");
+  }
+};
+
+ const submitBid = async (e) => {
+  e.preventDefault();
+
+  try {
+    await axios.post(`/rfq/${id}/bids`, form);
+
+    loadDetails();
+    loadHistory();
+    setForm({
+      freight: "",
+      origin: "",
+      destination: "",
+      transitTime: "",
+      validity: "",
+    });
+    
+  } catch (err) {
+    alert("Bid failed");
+  }
+};
 
   const getLiveStatus = () => {
   const now = new Date();
@@ -84,46 +138,92 @@ try {
 
   return (
     <div style={styles.page}>
+      <BackButton />
       {/* RFQ Info */}
       <div style={styles.card}>
-        <h1>{rfq.name}</h1>
+  <div style={styles.topBar}>
+    <h1>{rfq.name}</h1>
 
-        <p>
-          Ref ID: {rfq.referenceId}
-        </p>
+    {role === "buyer" && (
+      <button
+        style={styles.editBtn}
+        onClick={() => navigate(`/edit-rfq/${id}`)}
+      >
+        Edit RFQ
+      </button>
+    )}
+  </div>
 
-        <p>
-          Status: {getLiveStatus()}
-        </p>
+  <p>Ref ID: {rfq.referenceId}</p>
 
-        <p>
-          Close Time:
-          {" "}
-          {new Date(
-            rfq.endTime
-          ).toLocaleString()}
-        </p>
-      </div>
+  <p>Status: {getLiveStatus()}</p>
+
+  <p>
+    Close Time:{" "}
+    {new Date(rfq.endTime).toLocaleString()}
+  </p>
+</div>
 
       {/* Submit Bid */}
       {role === "supplier" && (
   <div style={styles.card}>
     <h2>Submit New Bid</h2>
 
-    <form onSubmit={submitBid}>
-      <input
-        type="number"
-        placeholder="Enter total price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        required
-        style={styles.input}
-      />
+   <form onSubmit={submitBid}>
+  <input
+    placeholder="Freight Charges"
+    value={form.freight}
+    onChange={(e) =>
+      setForm({...form, freight:e.target.value})
+    }
+    style={styles.input}
+    required
+  />
 
-      <button style={styles.button}>
-        Submit Bid
-      </button>
-    </form>
+  <input
+    placeholder="Origin Charges"
+    value={form.origin}
+    onChange={(e) =>
+      setForm({...form, origin:e.target.value})
+    }
+    style={styles.input}
+    required
+  />
+
+  <input
+    placeholder="Destination Charges"
+    value={form.destination}
+    onChange={(e) =>
+      setForm({...form, destination:e.target.value})
+    }
+    style={styles.input}
+    required
+  />
+
+  <input
+    placeholder="Transit Time"
+    value={form.transitTime}
+    onChange={(e) =>
+      setForm({...form, transitTime:e.target.value})
+    }
+    style={styles.input}
+    required
+  />
+
+  <input
+    placeholder="Validity"
+    value={form.validity}
+    onChange={(e) =>
+      setForm({...form, validity:e.target.value})
+    }
+    style={styles.input}
+    required
+  />
+
+  <button style={styles.button}>
+    Submit Bid
+  </button>
+</form>
   </div>
 )}
 
@@ -156,14 +256,62 @@ try {
         )}
       </div>
 
+      {/*  all bids hostory */}
+      <div style={styles.card}>
+  <h2>All Bid History</h2>
+
+  {role === "buyer" && !showHistory && (
+    <button
+      style={styles.button}
+      onClick={loadHistory}
+    >
+      Show Full History
+    </button>
+  )}
+
+ {showHistory &&
+  history.map((bid, index) => (
+    <div key={index} style={styles.bidRow}>
+      <span>
+        {bid.companyName ||
+         bid.name ||
+         bid.supplierName ||
+         `Supplier ${bid.supplierId || ""}`}
+      </span>
+
+      <span>
+        ₹{bid.totalPrice}
+      </span>
+
+      <span>
+        {new Date(
+          bid.createdAt
+        ).toLocaleTimeString()}
+      </span>
+    </div>
+  ))}
+</div>
+
       {/* Logs */}
       <div style={styles.card}>
-        <h2>Activity Logs</h2>
-        <p>
-          Bid submissions and auction
-          extensions will appear here.
-        </p>
+  <h2>Activity Logs</h2>
+
+  {logs.length === 0 ? (
+    <p>No logs available.</p>
+  ) : (
+    logs.map((log, index) => (
+      <div key={index} style={styles.bidRow}>
+        <span>
+          {log.action || log.type || "Activity"}
+        </span>
+
+        <span>
+          {log.message || log.reason || ""}
+        </span>
       </div>
+    ))
+  )}
+</div>
     </div>
   );
 }
@@ -208,4 +356,19 @@ const styles = {
     padding: "12px 0",
     borderBottom: "1px solid #eee",
   },
+  topBar: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "15px",
+},
+
+editBtn: {
+  padding: "10px 16px",
+  border: "none",
+  borderRadius: "8px",
+  background: "#111827",
+  color: "white",
+  cursor: "pointer",
+},
 };

@@ -18,23 +18,26 @@ export default function Dashboard() {
     fetchRFQs();
   }, []);
 
-  const fetchRFQs = async () => {
-    try {
-      const res = await axios.get("/rfq/auctions");
+ const fetchRFQs = async () => {
+  try {
+    const res = await axios.get("/rfq/auctions");
 
-      setRfqs(
-        Array.isArray(res.data)
-          ? res.data
-          : res.data.rfqs ||
-            res.data.data ||
-            []
-      );
-    } catch (err) {
-      setError("Failed to load auctions");
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("Auction API:", res.data);
+
+    setRfqs(
+      res.data.auctions ||
+      res.data.rfqs ||
+      res.data.data ||
+      res.data ||
+      []
+    );
+  } catch (err) {
+    console.log(err);
+    setError("Failed to load auctions");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div style={styles.page}>

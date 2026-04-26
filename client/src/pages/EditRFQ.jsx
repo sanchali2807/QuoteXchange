@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "../api/axios";
-
+import BackButton from "../components/BackButton";
 export default function EditRFQ() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -9,10 +9,13 @@ export default function EditRFQ() {
   const [form, setForm] = useState({
     name: "",
     referenceId: "",
-    closeTime: "",
+    startTime: "",
+    endTime: "",
     forcedCloseTime: "",
-    triggerWindow: 10,
-    extensionDuration: 5,
+    pickupDate: "",
+    xMinutes: 5,
+    yMinutes: 5,
+    triggerType: "ANY",
   });
 
   const [loading, setLoading] = useState(true);
@@ -23,9 +26,26 @@ export default function EditRFQ() {
     loadRFQ();
   }, []);
 
+  const formatDateTimeLocal = (value) => {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    const pad = (num) =>
+      String(num).padStart(2, "0");
+
+    return `${date.getFullYear()}-${pad(
+      date.getMonth() + 1
+    )}-${pad(date.getDate())}T${pad(
+      date.getHours()
+    )}:${pad(date.getMinutes())}`;
+  };
+
   const loadRFQ = async () => {
     try {
-      const res = await axios.get(`/rfq/${id}/details`);
+      const res = await axios.get(
+        `/rfq/${id}/details`
+      );
 
       const data =
         res.data.rfq ||
@@ -36,16 +56,26 @@ export default function EditRFQ() {
         name: data.name || "",
         referenceId:
           data.referenceId || "",
-        closeTime: formatDate(
-          data.closeTime
-        ),
-        forcedCloseTime: formatDate(
-          data.forcedCloseTime
-        ),
-        triggerWindow:
-          data.triggerWindow || 10,
-        extensionDuration:
-          data.extensionDuration || 5,
+        startTime:
+          formatDateTimeLocal(
+            data.startTime
+          ),
+        endTime:
+          formatDateTimeLocal(
+            data.endTime
+          ),
+        forcedCloseTime:
+          formatDateTimeLocal(
+            data.forcedCloseTime
+          ),
+        pickupDate:
+          data.pickupDate || "",
+        xMinutes:
+          data.xMinutes || 5,
+        yMinutes:
+          data.yMinutes || 5,
+        triggerType:
+          data.triggerType || "ANY",
       });
     } catch (err) {
       setError("Failed to load RFQ");
@@ -54,17 +84,11 @@ export default function EditRFQ() {
     }
   };
 
-  const formatDate = (value) => {
-    if (!value) return "";
-    return new Date(value)
-      .toISOString()
-      .slice(0, 16);
-  };
-
   const handleChange = (e) => {
     setForm({
       ...form,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.value,
     });
   };
 
@@ -75,24 +99,35 @@ export default function EditRFQ() {
     setError("");
 
     try {
-      await axios.put(`/rfq/${id}`, form);
+      await axios.put(
+        `/rfq/${id}`,
+        form
+      );
 
-      navigate(`/rfq/${id}`);
+      navigate(-1);
     } catch (err) {
       setError(
-        err.response?.data?.message ||
-        "Update failed"
+        err.response?.data
+          ?.message ||
+          "Update failed"
       );
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <p style={{ padding: "30px" }}>
+        Loading...
+      </p>
+    );
 
   return (
     <div style={styles.page}>
       <div style={styles.card}>
+       <BackButton />
+
         <h1>Edit RFQ</h1>
 
         {error && (
@@ -101,64 +136,178 @@ export default function EditRFQ() {
           </p>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={
+            handleSubmit
+          }
+        >
           <input
             name="name"
             placeholder="RFQ Name"
             value={form.name}
-            onChange={handleChange}
-            style={styles.input}
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
+            required
           />
 
           <input
             name="referenceId"
             placeholder="Reference ID"
-            value={form.referenceId}
-            onChange={handleChange}
-            style={styles.input}
-          />
-
-          <label>Close Time</label>
-          <input
-            type="datetime-local"
-            name="closeTime"
-            value={form.closeTime}
-            onChange={handleChange}
-            style={styles.input}
+            value={
+              form.referenceId
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
+            required
           />
 
           <label>
-            Forced Close Time
+            Start Time
+          </label>
+          <input
+            type="datetime-local"
+            name="startTime"
+            value={
+              form.startTime
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
+            required
+          />
+
+          <label>
+            Close Time
+          </label>
+          <input
+            type="datetime-local"
+            name="endTime"
+            value={
+              form.endTime
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
+            required
+          />
+
+          <label>
+            Forced Close
+            Time
           </label>
           <input
             type="datetime-local"
             name="forcedCloseTime"
-            value={form.forcedCloseTime}
-            onChange={handleChange}
-            style={styles.input}
+            value={
+              form.forcedCloseTime
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
+            required
+          />
+
+          <label>
+            Pickup Date
+          </label>
+          <input
+            type="date"
+            name="pickupDate"
+            value={
+              form.pickupDate
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
           />
 
           <input
             type="number"
-            name="triggerWindow"
-            placeholder="Trigger Window"
-            value={form.triggerWindow}
-            onChange={handleChange}
-            style={styles.input}
+            name="xMinutes"
+            placeholder="Trigger Window (mins)"
+            value={
+              form.xMinutes
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
           />
 
           <input
             type="number"
-            name="extensionDuration"
-            placeholder="Extension Duration"
-            value={form.extensionDuration}
-            onChange={handleChange}
-            style={styles.input}
+            name="yMinutes"
+            placeholder="Extension Duration (mins)"
+            value={
+              form.yMinutes
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
           />
+
+          <label>
+            Trigger Type
+          </label>
+          <select
+            name="triggerType"
+            value={
+              form.triggerType
+            }
+            onChange={
+              handleChange
+            }
+            style={
+              styles.input
+            }
+          >
+            <option value="ANY">
+              ANY
+            </option>
+            <option value="BID_LAST_X">
+              BID_LAST_X
+            </option>
+            <option value="RANK_CHANGE">
+              RANK_CHANGE
+            </option>
+            <option value="L1_CHANGE">
+              L1_CHANGE
+            </option>
+          </select>
 
           <button
             type="submit"
-            style={styles.button}
+            style={
+              styles.button
+            }
+            disabled={
+              saving
+            }
           >
             {saving
               ? "Saving..."
@@ -173,42 +322,66 @@ export default function EditRFQ() {
 const styles = {
   page: {
     minHeight: "100vh",
-    background: "#f3f4f6",
+    background:
+      "#f3f4f6",
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent:
+      "center",
+    alignItems:
+      "center",
     padding: "30px",
   },
 
   card: {
-    width: "500px",
-    background: "white",
+    width: "600px",
+    background:
+      "white",
     padding: "30px",
-    borderRadius: "16px",
+    borderRadius:
+      "16px",
     boxShadow:
       "0 10px 25px rgba(0,0,0,0.08)",
+  },
+
+  backBtn: {
+    padding:
+      "10px 16px",
+    marginBottom:
+      "20px",
+    border: "none",
+    borderRadius:
+      "8px",
+    background:
+      "#e5e7eb",
+    cursor: "pointer",
   },
 
   input: {
     width: "100%",
     padding: "12px",
-    marginBottom: "15px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
+    marginBottom:
+      "15px",
+    borderRadius:
+      "8px",
+    border:
+      "1px solid #ccc",
   },
 
   button: {
     width: "100%",
     padding: "12px",
-    background: "#111827",
+    background:
+      "#111827",
     color: "white",
     border: "none",
-    borderRadius: "8px",
+    borderRadius:
+      "8px",
     cursor: "pointer",
   },
 
   error: {
     color: "red",
-    marginBottom: "15px",
+    marginBottom:
+      "15px",
   },
 };

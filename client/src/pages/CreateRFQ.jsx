@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
-
+import BackButton from "../components/BackButton";
 export default function CreateRFQ() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    referenceId: "",
-    startTime: "",
-    closeTime: "",
-    forcedCloseTime: "",
-    triggerWindow: 10,
-    extensionDuration: 5,
-  });
+const [form, setForm] = useState({
+  name: "",
+  referenceId: "",
+  startTime: "",
+  endTime: "",
+  forcedCloseTime: "",
+  pickupDate: "",
+  xMinutes: 5,
+  yMinutes: 10,
+  triggerType: "ANY",
+});
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -34,7 +36,7 @@ export default function CreateRFQ() {
     try {
       await axios.post("/rfq", form);
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -48,6 +50,7 @@ export default function CreateRFQ() {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
+        <BackButton />
         <h1>Create New RFQ</h1>
 
         {error && (
@@ -88,8 +91,8 @@ export default function CreateRFQ() {
           <label>Close Time</label>
           <input
             type="datetime-local"
-            name="closeTime"
-            value={form.closeTime}
+            name="endTime"
+            value={form.endTime}
             onChange={handleChange}
             required
             style={styles.input}
@@ -105,24 +108,46 @@ export default function CreateRFQ() {
             style={styles.input}
           />
 
+         <label>Trigger Window</label>
           <input
             type="number"
-            name="triggerWindow"
+            name="xMinutes"
             placeholder="Trigger Window (mins)"
-            value={form.triggerWindow}
+            value={form.xMinutes}
             onChange={handleChange}
             style={styles.input}
           />
-
+           <label>Extension Duration</label>
           <input
             type="number"
-            name="extensionDuration"
+            name="yMinutes"
             placeholder="Extension Duration (mins)"
-            value={form.extensionDuration}
+            value={form.yMinutes}
             onChange={handleChange}
             style={styles.input}
           />
 
+          <label>Pickup Date</label>
+          <input
+            type="date"
+            name="pickupDate"
+            value={form.pickupDate}
+            onChange={handleChange}
+            style={styles.input}
+          />
+
+          <label>Trigger Type</label>
+            <select
+            name="triggerType"
+            value={form.triggerType}
+            onChange={handleChange}
+            style={styles.input}
+          >
+            <option value="ANY">ANY</option>
+            <option value="BID_LAST_X">BID_LAST_X</option>
+            <option value="RANK_CHANGE">RANK_CHANGE</option>
+            <option value="L1_CHANGE">L1_CHANGE</option>
+          </select>
           <button
             type="submit"
             style={styles.button}
