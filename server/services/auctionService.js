@@ -1,24 +1,18 @@
 const { RFQ, Bid} = require("../models");
 
 const getAuctionStatus = (rfq) => {
-  const now = new Date();
+  const now = Date.now();
 
-  const start = new Date(rfq.startTime);
-  const close = new Date(rfq.endTime);
-  const forced = new Date(rfq.forcedCloseTime);
+  const start = new Date(rfq.startTime).getTime();
+  const close = new Date(rfq.endTime).getTime();
+  const forced = new Date(rfq.forcedCloseTime).getTime();
 
-  if (now < start) {
-    return "UPCOMING";
-  }
+  if (now < start) return "UPCOMING";
 
-  if (now > close) {
-    return "CLOSED";
-  }
-
-  // now is between start and close
+  if (now > close) return "CLOSED";
 
   if (rfq.wasExtended) {
-    if (close.getTime() === forced.getTime()) {
+    if (close === forced) {
       return "FORCED CLOSED";
     }
 
