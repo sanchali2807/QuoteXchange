@@ -106,9 +106,12 @@ const checkAndExtendAuction = async (
       shouldExtend = l1Changed;
       break;
 
-    case "ANY":
-    default:
-      shouldExtend = orderChanged || l1Changed;
+   case "ANY":
+  shouldExtend = true;
+  break;
+
+default:
+  shouldExtend = false;
   }
 
   if (!shouldExtend) return false;
