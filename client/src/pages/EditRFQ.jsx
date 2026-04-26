@@ -128,7 +128,7 @@ export default function EditRFQ() {
       <div style={styles.card}>
        <BackButton />
 
-        <h1>Edit RFQ</h1>
+        <h1 style={styles.title}>Edit RFQ</h1>
 
         {error && (
           <p style={styles.error}>
@@ -169,7 +169,7 @@ export default function EditRFQ() {
             required
           />
 
-          <label>
+          <label style={styles.label}>
             Start Time
           </label>
           <input
@@ -187,7 +187,7 @@ export default function EditRFQ() {
             required
           />
 
-          <label>
+          <label style={styles.label}>
             Close Time
           </label>
           <input
@@ -205,7 +205,7 @@ export default function EditRFQ() {
             required
           />
 
-          <label>
+          <label style={styles.label}>
             Forced Close
             Time
           </label>
@@ -224,7 +224,7 @@ export default function EditRFQ() {
             required
           />
 
-          <label>
+          <label style={styles.label}>
             Pickup Date
           </label>
           <input
@@ -271,7 +271,7 @@ export default function EditRFQ() {
             }
           />
 
-          <label>
+          <label style={styles.label}>
             Trigger Type
           </label>
           <select
@@ -318,70 +318,66 @@ export default function EditRFQ() {
     </div>
   );
 }
-
 const styles = {
   page: {
     minHeight: "100vh",
-    background:
-      "#f3f4f6",
+    background: "#f3f4f6",
     display: "flex",
-    justifyContent:
-      "center",
-    alignItems:
-      "center",
-    padding: "30px",
+    justifyContent: "center",
+    alignItems: "flex-start", // top align
+    padding: "40px 20px",
   },
 
   card: {
-    width: "600px",
-    background:
-      "white",
-    padding: "30px",
-    borderRadius:
-      "16px",
-    boxShadow:
-      "0 10px 25px rgba(0,0,0,0.08)",
+    width: "100%",
+    maxWidth: "720px",
+    background: "white",
+    padding: "40px",
+    borderRadius: "18px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
   },
 
-  backBtn: {
-    padding:
-      "10px 16px",
-    marginBottom:
-      "20px",
-    border: "none",
-    borderRadius:
-      "8px",
-    background:
-      "#e5e7eb",
-    cursor: "pointer",
+  title: {
+    fontSize: "48px",
+    fontWeight: "700",
+    marginBottom: "30px",
+  },
+
+  label: {
+    display: "block",
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "8px",
+    marginTop: "10px",
   },
 
   input: {
     width: "100%",
-    padding: "12px",
-    marginBottom:
-      "15px",
-    borderRadius:
-      "8px",
-    border:
-      "1px solid #ccc",
+    padding: "16px 18px",
+    marginBottom: "18px",
+    borderRadius: "14px",
+    border: "1px solid #d1d5db",
+    fontSize: "18px",
+    boxSizing: "border-box", // FIX
+    outline: "none",
   },
 
   button: {
     width: "100%",
-    padding: "12px",
-    background:
-      "#111827",
+    padding: "16px",
+    marginTop: "10px",
+    background: "#111827",
     color: "white",
     border: "none",
-    borderRadius:
-      "8px",
+    borderRadius: "14px",
+    fontSize: "18px",
+    fontWeight: "600",
     cursor: "pointer",
   },
 
   error: {
     color: "red",
-    marginBottom:
-      "15px",
+    marginBottom: "15px",
+    fontSize: "15px",
   },
 };

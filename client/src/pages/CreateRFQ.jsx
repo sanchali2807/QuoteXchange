@@ -51,7 +51,7 @@ const [form, setForm] = useState({
     <div style={styles.page}>
       <div style={styles.card}>
         <BackButton />
-        <h1>Create New RFQ</h1>
+        <h1 style={styles.title}>Create New RFQ</h1>
 
         {error && (
           <p style={styles.error}>
@@ -78,7 +78,7 @@ const [form, setForm] = useState({
             style={styles.input}
           />
 
-          <label>Start Time</label>
+          <label style={styles.label}>Start Time</label>
           <input
             type="datetime-local"
             name="startTime"
@@ -88,7 +88,7 @@ const [form, setForm] = useState({
             style={styles.input}
           />
 
-          <label>Close Time</label>
+          <label style={styles.label}>Close Time</label>
           <input
             type="datetime-local"
             name="endTime"
@@ -98,7 +98,7 @@ const [form, setForm] = useState({
             style={styles.input}
           />
 
-          <label>Forced Close Time</label>
+          <label style={styles.label}>Forced Close Time</label>
           <input
             type="datetime-local"
             name="forcedCloseTime"
@@ -108,7 +108,7 @@ const [form, setForm] = useState({
             style={styles.input}
           />
 
-         <label>Trigger Window</label>
+         <label style={styles.label}>Trigger Window</label>
           <input
             type="number"
             name="xMinutes"
@@ -117,7 +117,7 @@ const [form, setForm] = useState({
             onChange={handleChange}
             style={styles.input}
           />
-           <label>Extension Duration</label>
+           <label style={styles.label}>Extension Duration</label>
           <input
             type="number"
             name="yMinutes"
@@ -127,7 +127,7 @@ const [form, setForm] = useState({
             style={styles.input}
           />
 
-          <label>Pickup Date</label>
+          <label style={styles.label}>Pickup Date</label>
           <input
             type="date"
             name="pickupDate"
@@ -136,7 +136,7 @@ const [form, setForm] = useState({
             style={styles.input}
           />
 
-          <label>Trigger Type</label>
+          <label style={styles.label}>Trigger Type</label>
             <select
             name="triggerType"
             value={form.triggerType}
@@ -162,46 +162,66 @@ const [form, setForm] = useState({
     </div>
   );
 }
-
 const styles = {
   page: {
     minHeight: "100vh",
     background: "#f3f4f6",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    padding: "30px",
+    alignItems: "flex-start", // top align
+    padding: "40px 20px",
   },
 
   card: {
-    width: "500px",
+    width: "100%",
+    maxWidth: "720px", // wider form
     background: "white",
-    padding: "30px",
-    borderRadius: "16px",
-    boxShadow:
-      "0 10px 25px rgba(0,0,0,0.08)",
+    padding: "40px",
+    borderRadius: "18px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+  },
+
+  title: {
+    fontSize: "48px",
+    fontWeight: "700",
+    marginBottom: "30px",
+  },
+
+  label: {
+    display: "block",
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "8px",
+    marginTop: "10px",
   },
 
   input: {
     width: "100%",
-    padding: "12px",
-    marginBottom: "15px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
+    padding: "16px 18px",
+    marginBottom: "18px",
+    borderRadius: "14px",
+    border: "1px solid #d1d5db",
+    fontSize: "18px",
+    boxSizing: "border-box", // IMPORTANT FIX
+    outline: "none",
   },
 
   button: {
     width: "100%",
-    padding: "12px",
+    padding: "16px",
+    marginTop: "10px",
     background: "#2563eb",
     color: "white",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "14px",
+    fontSize: "18px",
+    fontWeight: "600",
     cursor: "pointer",
   },
 
   error: {
     color: "red",
     marginBottom: "15px",
+    fontSize: "15px",
   },
 };

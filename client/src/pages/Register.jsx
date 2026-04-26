@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../api/axios";
 import BackButton from "../components/BackButton";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 export default function Register() {
   const navigate = useNavigate();
-
+const { login } = useContext(AuthContext);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -30,8 +32,8 @@ export default function Register() {
     setLoading(true);
 
     try {
-      await axios.post("/auth/register", form);
-
+      const res = await axios.post("/auth/register", form);
+      login(res.data.token);
       navigate("/");
     } catch (err) {
   console.log(err);
