@@ -5,23 +5,27 @@ const getAuctionStatus = (rfq) => {
 
   const start = new Date(rfq.startTime);
   const close = new Date(rfq.endTime);
-  const forcedClose = new Date(rfq.forcedCloseTime);
+  const forced = new Date(rfq.forcedCloseTime);
 
-  if (now.getTime() < start.getTime()) {
+  if (now < start) {
     return "UPCOMING";
   }
 
-  if (now.getTime() >= start.getTime() &&
-      now.getTime() <= close.getTime()) {
-    return "ACTIVE";
+  if (now > close) {
+    return "CLOSED";
   }
 
-  if (now.getTime() > close.getTime() &&
-      now.getTime() <= forcedClose.getTime()) {
+  // now is between start and close
+
+  if (rfq.wasExtended) {
+    if (close.getTime() === forced.getTime()) {
+      return "FORCED CLOSED";
+    }
+
     return "EXTENDED";
   }
 
-  return "CLOSED";
+  return "ACTIVE";
 };
 
 

@@ -3,33 +3,17 @@ import { useNavigate } from "react-router-dom";
 export default function AuctionCard({ item }) {
   const navigate = useNavigate();
 
-  const getLiveStatus = () => {
-    const now = new Date();
-    const start = new Date(item.startTime);
-    const end = new Date(item.endTime);
-    const forced = new Date(item.forcedCloseTime);
 
-    if (now < start) return "UPCOMING";
 
-    if (now >= start && now <= end) {
-      return "ACTIVE";
-    }
-
-    if (now > end && now <= forced) {
-      return "EXTENDED";
-    }
-
-    return "CLOSED";
-  };
-
-  const status = getLiveStatus();
+  const status = item.status;
 
   const getStatusColor = () => {
-    if (status === "CLOSED") return "#dc2626";
-    if (status === "EXTENDED") return "#f59e0b";
-    if (status === "UPCOMING") return "#2563eb";
-    return "#16a34a"; // ACTIVE
-  };
+  if (status === "CLOSED") return "#dc2626";
+  if (status === "FORCED CLOSED") return "#7c3aed";
+  if (status === "EXTENDED") return "#f59e0b";
+  if (status === "UPCOMING") return "#2563eb";
+  return "#16a34a";
+};
 
   const formatDate = (date) => {
     if (!date) return "N/A";
