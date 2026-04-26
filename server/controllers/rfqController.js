@@ -86,6 +86,9 @@ const rfq = await RFQ.create({
   triggerType,
   buyerId: req.user.id
 });
+console.log("SAVED START:", rfq.startTime);
+console.log("SAVED END:", rfq.endTime);
+console.log("SAVED FORCED:", rfq.forcedCloseTime);
 
     await addLog(
         rfq.id,
