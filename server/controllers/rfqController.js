@@ -290,7 +290,8 @@ const getAuctionListings = async(req,res)=>{
                 endTime : rfq.endTime,
                 forcedCloseTime : rfq.forcedCloseTime,
                 status : getAuctionStatus(rfq),
-                lowestBid : lowestBid
+                lowestBid : lowestBid,
+                wasExtended: rfq.wasExtended,
             }
             )
         }

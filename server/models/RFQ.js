@@ -68,7 +68,11 @@ const RFQ = sequelize.define("RFQ",{
       "ForceClosed"
     ),
     defaultValue: "Active"
-  }
+  },
+  wasExtended: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: false
+},
 });
 
 module.exports = RFQ;

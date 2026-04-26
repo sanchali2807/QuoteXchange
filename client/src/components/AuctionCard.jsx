@@ -4,16 +4,16 @@ export default function AuctionCard({ item }) {
   const navigate = useNavigate();
 
   const getLiveStatus = () => {
-    const now = new Date();
-    const start = new Date(item.startTime);
-    const close = new Date(item.endTime);
-    const forced = new Date(item.forcedCloseTime);
+  const now = new Date();
+  const start = new Date(item.startTime);
+  const forced = new Date(item.forcedCloseTime);
 
-    if (now < start) return "UPCOMING";
-    if (now >= start && now <= close) return "ACTIVE";
-    if (now > close && now <= forced) return "EXTENDED";
-    return "CLOSED";
-  };
+  if (now < start) return "UPCOMING";
+  if (now > forced) return "FORCED CLOSED";
+  if (item.wasExtended) return "EXTENDED";
+
+  return "ACTIVE";
+};
 
   const status = getLiveStatus();
 

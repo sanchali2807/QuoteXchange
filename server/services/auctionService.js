@@ -88,8 +88,9 @@ const checkAndExtendAuction = async(rfqId,oldRank,newRank,prevL1,currL1)=>{
          newClose = forced
     }
     await rfq.update({
-        endTime : newClose
-    })
+  endTime: newClose,
+  wasExtended: true
+});
     return true;
 
 }
