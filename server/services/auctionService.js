@@ -1,4 +1,4 @@
-const { RFQ, Bid} = require("../models");
+const { RFQ } = require("../models");
 
 const parseLocal = (val) => {
   const s = String(val).replace("T", " ").slice(0, 19);
@@ -11,10 +11,8 @@ const parseLocal = (val) => {
 };
 
 const getISTNow = () => {
-  const now = new Date();
-
   return new Date(
-    now.toLocaleString("en-US", {
+    new Date().toLocaleString("en-US", {
       timeZone: "Asia/Kolkata"
     })
   );
@@ -28,7 +26,6 @@ const getAuctionStatus = (rfq) => {
   const forced = parseLocal(rfq.forcedCloseTime);
 
   if (now < start) return "UPCOMING";
-
   if (now > close) return "CLOSED";
 
   if (rfq.wasExtended) {
@@ -41,43 +38,46 @@ const getAuctionStatus = (rfq) => {
   return "ACTIVE";
 };
 
-
 const isInsideTriggerWindow = (rfq) => {
-    const now = new Date();
-    const close = new Date(rfq.endTime);
+  const now = getISTNow();
+  const close = parseLocal(rfq.endTime);
 
-    console.log("NOW:", now);
-    console.log("CLOSE:", close);
+  const diffTime = (close - now) / (1000 * 60);
 
-    const diffTime = (close - now) / (1000 * 60);
+  console.log("NOW:", now);
+  console.log("CLOSE:", close);
+  console.log("DIFF:", diffTime);
 
-    console.log("DIFF MIN:", diffTime);
-    console.log("X MIN:", rfq.xMinutes);
+  return diffTime <= rfq.xMinutes && diffTime >= 0;
+};
 
-    return diffTime <= rfq.xMinutes && diffTime >= 0;
-}
+const checkAndExtendAuction = async (
+  rfqId,
+  oldRank,
+  newRank,
+  prevL1,
+  currL1
+) => {
+  const rfq = await RFQ.findByPk(rfqId);
+  if (!rfq) return false;
 
-const checkAndExtendAuction = async(rfqId,oldRank,newRank,prevL1,currL1)=>{
-    const rfq = await RFQ.findByPk(rfqId);
-    if(!rfq)return false;
+  const now = getISTNow();
+  const forced = parseLocal(rfq.forcedCloseTime);
 
-    const now = new Date();
-    const forced = new Date(rfq.forcedCloseTime);
+  if (now > forced) return false;
 
-    if(now > forced)return false;
+  if (!isInsideTriggerWindow(rfq)) return false;
 
-    if(!isInsideTriggerWindow(rfq))return false;
+  const oldOrder = oldRank.join(",");
+  const newOrder = newRank.join(",");
 
-    const oldOrder = oldRank.join(",");
-    const newOrder = newRank.join(",");
-    const orderChanged = oldOrder !== newOrder;
-    
-    const L1Changed = prevL1 !== currL1;
+  const orderChanged = oldOrder !== newOrder;
+  const l1Changed = prevL1 !== currL1;
 
-    let shouldExtend = false;
+  let shouldExtend = false;
 
-    switch (rfq.triggerType){
-           case "BID_LAST_X":
+  switch (rfq.triggerType) {
+    case "BID_LAST_X":
       shouldExtend = true;
       break;
 
@@ -86,36 +86,32 @@ const checkAndExtendAuction = async(rfqId,oldRank,newRank,prevL1,currL1)=>{
       break;
 
     case "L1_CHANGE":
-      shouldExtend = L1Changed;
+      shouldExtend = l1Changed;
       break;
 
     case "ANY":
     default:
-      shouldExtend = orderChanged||L1Changed;
-    }
+      shouldExtend = orderChanged || l1Changed;
+  }
 
-    if(!shouldExtend)return false;
+  if (!shouldExtend) return false;
 
-    let newClose = new Date(rfq.endTime);
-    newClose.setMinutes(
-        newClose.getMinutes() + rfq.yMinutes
-    )
+  let newClose = parseLocal(rfq.endTime);
+  newClose.setMinutes(newClose.getMinutes() + rfq.yMinutes);
 
-    if(newClose > forced){
-         newClose = forced
-    }
-    await rfq.update({
-  endTime: newClose,
-  wasExtended: true
-});
-    return true;
+  if (newClose > forced) {
+    newClose = forced;
+  }
 
-}
+  await rfq.update({
+    endTime: newClose,
+    wasExtended: true
+  });
 
+  return true;
+};
 
 module.exports = {
-    getAuctionStatus,
-    checkAndExtendAuction
-}
-
-
+  getAuctionStatus,
+  checkAndExtendAuction
+};
