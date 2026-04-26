@@ -20,11 +20,11 @@ const getISTNow = () => {
   );
 };
 
-const pad = (n) => String(n).padStart(2, "0");
-
-const formatDT = (d) =>
-  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
-  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const fixIST = (val) => {
+  const d = new Date(val);
+  d.setMinutes(d.getMinutes() - 330);
+  return d;
+};
 
 /* ---------------- STATUS ---------------- */
 
@@ -63,7 +63,7 @@ const isInsideTriggerWindow = (rfq) => {
   console.log("DIFF MIN:", diffTime);
   console.log("X MIN:", rfq.xMinutes);
 
-  return diffTime <= rfq.xMinutes && diffTime >= 0;
+  return diffTime <= Number(rfq.xMinutes) && diffTime >= 0;
 };
 
 /* ---------------- EXTENSION ---------------- */
@@ -78,11 +78,15 @@ const checkAndExtendAuction = async (
   const rfq = await RFQ.findByPk(rfqId);
   if (!rfq) return false;
 
-
   const now = getISTNow();
   const forced = parseLocal(rfq.forcedCloseTime);
+  const currentClose = parseLocal(rfq.endTime);
 
   if (now > forced) return false;
+
+  if (currentClose.getTime() === forced.getTime()) {
+    return false;
+  }
 
   if (!isInsideTriggerWindow(rfq)) return false;
 
@@ -92,9 +96,6 @@ const checkAndExtendAuction = async (
   const orderChanged = oldOrder !== newOrder;
   const l1Changed = prevL1 !== currL1;
 
-  if (parseLocal(rfq.endTime).getTime() === forced.getTime()) {
-  return false;
-}
   let shouldExtend = false;
 
   switch (rfq.triggerType) {
@@ -110,12 +111,12 @@ const checkAndExtendAuction = async (
       shouldExtend = l1Changed;
       break;
 
-   case "ANY":
-  shouldExtend = true;
-  break;
+    case "ANY":
+      shouldExtend = true;
+      break;
 
-default:
-  shouldExtend = false;
+    default:
+      shouldExtend = false;
   }
 
   if (!shouldExtend) return false;
@@ -131,7 +132,7 @@ default:
   }
 
   await rfq.update({
-    endTime: formatDT(newClose),
+    endTime: fixIST(newClose),
     wasExtended: true,
   });
 
