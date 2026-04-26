@@ -11,6 +11,12 @@ const getAuctionStatus = (rfq) => {
   const closeMs = close.getTime();
   const forcedMs = forced.getTime();
 
+  console.log("NOW:", now);
+console.log("START RAW:", rfq.startTime);
+console.log("START PARSED:", start);
+console.log("CLOSE RAW:", rfq.endTime);
+console.log("CLOSE PARSED:", close);
+console.log("nowMs < startMs ?", nowMs < startMs);
   if (nowMs < startMs) {
     return "UPCOMING";
   }
