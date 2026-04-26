@@ -124,19 +124,27 @@ const loadHistory = async () => {
   }
 };
 
-  const getLiveStatus = () => {
- const now = new Date();
+const getLiveStatus = () => {
+  if (!rfq) return "LOADING";
 
-const start = new Date(rfq.startTime);
-const end = new Date(rfq.endTime);
+  const now = new Date();
+  const start = new Date(rfq.startTime);
+  const end = new Date(rfq.endTime);
+  const forced = new Date(rfq.forcedCloseTime);
 
-if (now >= start && now <= end) {
-  status = "ACTIVE";
-} else if (now < start) {
-  status = "UPCOMING";
-} else {
-  status = "CLOSED";
-}
+  if (now < start) {
+    return "UPCOMING";
+  }
+
+  if (now >= start && now <= end) {
+    return "ACTIVE";
+  }
+
+  if (now > end && now <= forced) {
+    return "EXTENDED";
+  }
+
+  return "CLOSED";
 };
   if (loading) return <p>Loading...</p>;
 
