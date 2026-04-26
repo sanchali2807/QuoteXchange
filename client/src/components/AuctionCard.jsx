@@ -21,6 +21,7 @@ export default function AuctionCard({ item }) {
     if (status === "CLOSED") return "#dc2626";
     if (status === "EXTENDED") return "#f59e0b";
     if (status === "UPCOMING") return "#2563eb";
+    if (status === "FORCED CLOSED") return "#441ebe";
     return "#16a34a";
   };
 

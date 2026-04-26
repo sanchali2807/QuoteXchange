@@ -120,8 +120,14 @@ const loadHistory = async () => {
     });
     
   } catch (err) {
-    alert("Bid failed");
-  }
+  console.log("BID ERROR:", err.response?.data || err);
+
+  alert(
+    err.response?.data?.message ||
+    err.message ||
+    "Bid failed"
+  );
+}
 };
 
 const getLiveStatus = () => {
