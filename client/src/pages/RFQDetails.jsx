@@ -37,9 +37,11 @@ const [logs, setLogs] = useState([]);
 
 useEffect(() => {
   loadDetails();
+   loadLogs();
 
   const interval = setInterval(() => {
     loadDetails();
+     loadLogs();
   }, 3000);
 
   return () => clearInterval(interval);
