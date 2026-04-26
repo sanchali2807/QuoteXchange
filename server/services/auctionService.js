@@ -78,6 +78,7 @@ const checkAndExtendAuction = async (
   const rfq = await RFQ.findByPk(rfqId);
   if (!rfq) return false;
 
+
   const now = getISTNow();
   const forced = parseLocal(rfq.forcedCloseTime);
 
@@ -91,6 +92,9 @@ const checkAndExtendAuction = async (
   const orderChanged = oldOrder !== newOrder;
   const l1Changed = prevL1 !== currL1;
 
+  if (parseLocal(rfq.endTime).getTime() === forced.getTime()) {
+  return false;
+}
   let shouldExtend = false;
 
   switch (rfq.triggerType) {
