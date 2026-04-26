@@ -3,6 +3,8 @@ const generateToken = require("../utils/token");
 const {User} = require("../models")
 
 const register = async(req,res)=>{
+    console.log("REGISTER HIT");
+  console.log("BODY:", req.body);
     try{
         const {name , email , password , role , companyName} = req.body;
 
@@ -77,6 +79,7 @@ if (!passwordRegex.test(password)) {
     })
 
     }catch(err){
+        console.error("REGISTER ERROR:", err);
         return res.status(500).json({
             success : false,
             message : err.message
