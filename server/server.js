@@ -13,10 +13,18 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
+
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN,
+  origin: [
+    "https://quote-xchange.vercel.app",
+    "http://localhost:5173"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
+app.options("*", cors());
 // app.use(cors({
 //   origin: "https://quote-xchange.vercel.app",
 //   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
