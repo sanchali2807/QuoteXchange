@@ -4,6 +4,10 @@ const Bid = require("./Bid");
 const ActivityLog = require("./ActivityLog");
 
 // buyers create RFQs
+// const User = require("./User");
+console.log("User import:", User);
+console.log("typeof User:", typeof User);
+console.log("hasMany:", User && User.hasMany);
 User.hasMany(RFQ,{
     foreignKey : "buyerId"
 });
