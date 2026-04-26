@@ -13,10 +13,18 @@ const logRoutes = require("./routes/logRoutes");
 
 const app = express();
 
+// app.use(cors({
+//   origin: process.env.CLIENT_ORIGIN,
+//   credentials: true
+// }));
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN,
+  origin: "https://quote-xchange.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
+
+app.options("*", cors());
 
 app.use(express.json());
 
@@ -31,6 +39,10 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.use((req,res,next)=>{
+  console.log("REQ:", req.method, req.url);
+  next();
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/rfq", rfqRoutes);
 app.use("/api/rfq", bidRoutes);
