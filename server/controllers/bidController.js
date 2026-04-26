@@ -25,13 +25,18 @@ console.log("id =", req.params.id);
                 message : "RFQ not found"
             })
         }
-        const status = getAuctionStatus(rfq);
-        if(status !== "ACTIVE"){
-            return res.status(400).json({
-                success : false,
-                message : `Auction is ${status}`
-            })
-        }
+       const status = getAuctionStatus(rfq);
+
+if (
+  status === "UPCOMING" ||
+  status === "CLOSED" ||
+  status === "FORCED CLOSED"
+) {
+  return res.status(400).json({
+    success: false,
+    message: `Auction is ${status}`
+  });
+}
 
         const {
             freight,
