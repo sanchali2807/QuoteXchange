@@ -1,34 +1,27 @@
 const { RFQ, Bid} = require("../models");
+const parseLocal = (val) => {
+  const [datePart, timePart] = val.split(" ");
+  const [y, m, d] = datePart.split("-").map(Number);
+  const [hh, mm, ss] = timePart.split(":").map(Number);
+
+  return new Date(y, m - 1, d, hh, mm, ss);
+};
 const getAuctionStatus = (rfq) => {
   const now = new Date();
 
-  const start = new Date(rfq.startTime);
-  const close = new Date(rfq.endTime);
-  const forced = new Date(rfq.forcedCloseTime);
+  const start = parseLocal(rfq.startTime);
+  const close = parseLocal(rfq.endTime);
+  const forced = parseLocal(rfq.forcedCloseTime);
 
-  const nowMs = now.getTime();
-  const startMs = start.getTime();
-  const closeMs = close.getTime();
-  const forcedMs = forced.getTime();
+  if (now < start) return "UPCOMING";
 
-  console.log("NOW:", now);
-console.log("START RAW:", rfq.startTime);
-console.log("START PARSED:", start);
-console.log("CLOSE RAW:", rfq.endTime);
-console.log("CLOSE PARSED:", close);
-console.log("nowMs < startMs ?", nowMs < startMs);
-  if (nowMs < startMs) {
-    return "UPCOMING";
-  }
-
-  if (nowMs > closeMs) {
-    return "CLOSED";
-  }
+  if (now > close) return "CLOSED";
 
   if (rfq.wasExtended) {
-    if (closeMs === forcedMs) {
+    if (close.getTime() === forced.getTime()) {
       return "FORCED CLOSED";
     }
+
     return "EXTENDED";
   }
 
