@@ -1,5 +1,7 @@
 const { RFQ } = require("../models");
 
+/* ---------------- HELPERS ---------------- */
+
 const parseLocal = (val) => {
   const s = String(val).replace("T", " ").slice(0, 19);
 
@@ -13,10 +15,18 @@ const parseLocal = (val) => {
 const getISTNow = () => {
   return new Date(
     new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata"
+      timeZone: "Asia/Kolkata",
     })
   );
 };
+
+const pad = (n) => String(n).padStart(2, "0");
+
+const formatDT = (d) =>
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+/* ---------------- STATUS ---------------- */
 
 const getAuctionStatus = (rfq) => {
   const now = getISTNow();
@@ -26,17 +36,21 @@ const getAuctionStatus = (rfq) => {
   const forced = parseLocal(rfq.forcedCloseTime);
 
   if (now < start) return "UPCOMING";
+
   if (now > close) return "CLOSED";
 
   if (rfq.wasExtended) {
     if (close.getTime() === forced.getTime()) {
       return "FORCED CLOSED";
     }
+
     return "EXTENDED";
   }
 
   return "ACTIVE";
 };
+
+/* ---------------- TRIGGER WINDOW ---------------- */
 
 const isInsideTriggerWindow = (rfq) => {
   const now = getISTNow();
@@ -46,10 +60,13 @@ const isInsideTriggerWindow = (rfq) => {
 
   console.log("NOW:", now);
   console.log("CLOSE:", close);
-  console.log("DIFF:", diffTime);
+  console.log("DIFF MIN:", diffTime);
+  console.log("X MIN:", rfq.xMinutes);
 
   return diffTime <= rfq.xMinutes && diffTime >= 0;
 };
+
+/* ---------------- EXTENSION ---------------- */
 
 const checkAndExtendAuction = async (
   rfqId,
@@ -97,15 +114,18 @@ const checkAndExtendAuction = async (
   if (!shouldExtend) return false;
 
   let newClose = parseLocal(rfq.endTime);
-  newClose.setMinutes(newClose.getMinutes() + rfq.yMinutes);
+
+  newClose.setMinutes(
+    newClose.getMinutes() + Number(rfq.yMinutes)
+  );
 
   if (newClose > forced) {
     newClose = forced;
   }
 
   await rfq.update({
-    endTime: newClose,
-    wasExtended: true
+    endTime: formatDT(newClose),
+    wasExtended: true,
   });
 
   return true;
@@ -113,5 +133,5 @@ const checkAndExtendAuction = async (
 
 module.exports = {
   getAuctionStatus,
-  checkAndExtendAuction
+  checkAndExtendAuction,
 };
