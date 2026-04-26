@@ -2,7 +2,7 @@ import axios from "axios";
 
 // This creates a custom Axios object named api.
 const api = axios.create({
-    baseURL : "http://localhost:8300/api"
+    baseURL : import.meta.env.VITE_API_URL
 });
 
 // interceptor means Run some code before every request goes to backend
