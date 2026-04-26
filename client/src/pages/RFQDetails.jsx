@@ -37,11 +37,12 @@ const [logs, setLogs] = useState([]);
 
 useEffect(() => {
   loadDetails();
-  loadLogs();
 
-  if (role === "supplier") {
-    loadHistory();
-  }
+  const interval = setInterval(() => {
+    loadDetails();
+  }, 3000);
+
+  return () => clearInterval(interval);
 }, []);
 
 const loadLogs = async () => {

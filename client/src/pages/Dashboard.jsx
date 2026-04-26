@@ -14,9 +14,15 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+useEffect(() => {
+  fetchRFQs();
+
+  const interval = setInterval(() => {
     fetchRFQs();
-  }, []);
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
 
  const fetchRFQs = async () => {
   try {
