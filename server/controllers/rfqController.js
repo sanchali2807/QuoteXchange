@@ -331,8 +331,11 @@ const getRfqDetails= async(req,res)=>{
             where : {rfqId : rfq.id},
             order : [["createdAt","DESC"]]
         })
+        const status = getAuctionStatus(rfq);
         return res.status(200).json({
-            rfq,
+            rfq:{
+                ...rfq.toJSON(),status
+            },
             bids,
             leaderboard,
             logs
