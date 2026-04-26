@@ -4,16 +4,23 @@ export default function AuctionCard({ item }) {
   const navigate = useNavigate();
 
   const getLiveStatus = () => {
-  const now = new Date();
-  const start = new Date(item.startTime);
-  const forced = new Date(item.forcedCloseTime);
+    const now = new Date();
+    const start = new Date(item.startTime);
+    const end = new Date(item.endTime);
+    const forced = new Date(item.forcedCloseTime);
 
-  if (now < start) return "UPCOMING";
-  if (now > forced) return "FORCED CLOSED";
-  if (item.wasExtended) return "EXTENDED";
+    if (now < start) return "UPCOMING";
 
-  return "ACTIVE";
-};
+    if (now >= start && now <= end) {
+      return "ACTIVE";
+    }
+
+    if (now > end && now <= forced) {
+      return "EXTENDED";
+    }
+
+    return "CLOSED";
+  };
 
   const status = getLiveStatus();
 
@@ -21,8 +28,7 @@ export default function AuctionCard({ item }) {
     if (status === "CLOSED") return "#dc2626";
     if (status === "EXTENDED") return "#f59e0b";
     if (status === "UPCOMING") return "#2563eb";
-    if (status === "FORCED CLOSED") return "#441ebe";
-    return "#16a34a";
+    return "#16a34a"; // ACTIVE
   };
 
   const formatDate = (date) => {
@@ -45,10 +51,24 @@ export default function AuctionCard({ item }) {
         </span>
       </div>
 
-      <p><strong>Ref ID:</strong> {item.referenceId}</p>
-      <p><strong>Lowest Bid:</strong> ₹{item.lowestBid ?? "No Bid"}</p>
-      <p><strong>Close Time:</strong> {formatDate(item.endTime)}</p>
-      <p><strong>Forced Close:</strong> {formatDate(item.forcedCloseTime)}</p>
+      <p>
+        <strong>Ref ID:</strong> {item.referenceId}
+      </p>
+
+      <p>
+        <strong>Lowest Bid:</strong> ₹
+        {item.lowestBid ?? "No Bid"}
+      </p>
+
+      <p>
+        <strong>Close Time:</strong>{" "}
+        {formatDate(item.endTime)}
+      </p>
+
+      <p>
+        <strong>Forced Close:</strong>{" "}
+        {formatDate(item.forcedCloseTime)}
+      </p>
 
       <button
         style={styles.button}
@@ -67,13 +87,19 @@ const styles = {
     borderRadius: "16px",
     boxShadow: "0 10px 24px rgba(0,0,0,0.08)",
   },
+
   topRow: {
     display: "flex",
     justifyContent: "space-between",
     marginBottom: "12px",
     gap: "10px",
   },
-  title: { margin: 0, fontSize: "20px" },
+
+  title: {
+    margin: 0,
+    fontSize: "20px",
+  },
+
   badge: {
     color: "white",
     padding: "6px 10px",
@@ -81,6 +107,7 @@ const styles = {
     fontSize: "12px",
     fontWeight: "bold",
   },
+
   button: {
     marginTop: "18px",
     width: "100%",
