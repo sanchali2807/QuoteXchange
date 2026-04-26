@@ -27,19 +27,15 @@ export default function EditRFQ() {
   }, []);
 
   const formatDateTimeLocal = (value) => {
-    if (!value) return "";
+  if (!value) return "";
 
-    const date = new Date(value);
+  const date = new Date(value);
+  date.setMinutes(
+    date.getMinutes() - date.getTimezoneOffset()
+  );
 
-    const pad = (num) =>
-      String(num).padStart(2, "0");
-
-    return `${date.getFullYear()}-${pad(
-      date.getMonth() + 1
-    )}-${pad(date.getDate())}T${pad(
-      date.getHours()
-    )}:${pad(date.getMinutes())}`;
-  };
+  return date.toISOString().slice(0, 16);
+};
 
   const loadRFQ = async () => {
     try {
