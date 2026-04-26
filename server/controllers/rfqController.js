@@ -61,6 +61,9 @@ const createRfq = async(req,res)=>{
         } = req.body;
 
        const error = validateRfqInput(req.body);
+       console.log(req.body.startTime);
+console.log(req.body.endTime);
+console.log(req.body.forcedCloseTime);
 
 if (error) {
   return res.status(400).json({
