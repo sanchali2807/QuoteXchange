@@ -13,7 +13,11 @@ const generateReferenceId=()=>{
     return "RFQ - " + Date.now();
     // Date.now is used because Returns current timestamp in milliseconds 
 }
-
+const fixIST = (val) => {
+  const d = new Date(val);
+  d.setMinutes(d.getMinutes() - 330);
+  return d;
+};
 const validateRfqInput = ({
   name,
   startTime,
@@ -77,9 +81,9 @@ if (error) {
 const rfq = await RFQ.create({
   name,
   referenceId: generateReferenceId(),
-  startTime: formatDT(startTime),
-  endTime: formatDT(endTime),
-  forcedCloseTime: formatDT(forcedCloseTime),
+  startTime: fixIST(startTime),
+endTime: fixIST(endTime),
+forcedCloseTime: fixIST(forcedCloseTime),
   pickupDate,
   xMinutes,
   yMinutes,
@@ -213,16 +217,13 @@ const updateRfq = async(req,res)=>{
         const payload = { ...req.body };
 
 if (payload.startTime)
-  payload.startTime =
-    payload.startTime.replace("T", " ") + ":00";
+  payload.startTime = fixIST(payload.startTime);
 
 if (payload.endTime)
-  payload.endTime =
-    payload.endTime.replace("T", " ") + ":00";
+  payload.endTime = fixIST(payload.endTime);
 
 if (payload.forcedCloseTime)
-  payload.forcedCloseTime =
-    payload.forcedCloseTime.replace("T", " ") + ":00";
+  payload.forcedCloseTime = fixIST(payload.forcedCloseTime);
 
 await rfq.update(payload);
         return res.status(200).json({
