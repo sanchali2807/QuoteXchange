@@ -36,7 +36,10 @@ const startServer = async()=>{
         await sequilize.authenticate();
         console.log("Database Connected");
 
-        await sequilize.sync();
+        await sequelize.sync()
+.then(() => {
+  app.listen(PORT);
+});
         console.log("database synced");
 
         //routes
