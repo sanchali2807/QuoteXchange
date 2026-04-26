@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
-import { useAuth } from "../context/AuthContext";
+
+
+import Loader from "../components/Loader";
+import EmptyState from "../components/EmptyState";
+import AuctionCard from "../components/AuctionCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
 
   const [rfqs, setRfqs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,13 +21,14 @@ export default function Dashboard() {
   const fetchRFQs = async () => {
     try {
       const res = await axios.get("/rfq/auctions");
+
       setRfqs(
-       Array.isArray(res.data)
-        ? res.data
-        : res.data.rfqs ||
-        res.data.data ||
-        []
-   );
+        Array.isArray(res.data)
+          ? res.data
+          : res.data.rfqs ||
+            res.data.data ||
+            []
+      );
     } catch (err) {
       setError("Failed to load auctions");
     } finally {
@@ -32,74 +36,29 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
-
   return (
     <div style={styles.page}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h1>RFQ Dashboard</h1>
+   
 
-        <div>
-          <button
-            style={styles.createBtn}
-            onClick={() => navigate("/create-rfq")}
-          >
-            + Create RFQ
-          </button>
+      {loading && <Loader />}
 
-          <button
-            style={styles.logoutBtn}
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Content */}
-      {loading && <p>Loading auctions...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <p style={styles.error}>
+          {error}
+        </p>
+      )}
 
       {!loading && rfqs.length === 0 && (
-        <p>No RFQs available</p>
+        <EmptyState message="No RFQs Available" />
       )}
 
       <div style={styles.grid}>
         {rfqs.map((item) => (
-          <div
-            key={item.id}
-            style={styles.card}
-            onClick={() =>
-              navigate(`/rfq/${item.id}`)
-            }
-          >
-            <h2>{item.name}</h2>
-
-            <p>
-              Ref ID: {item.referenceId}
-            </p>
-
-            <p>
-              Status: {item.status}
-            </p>
-
-            <p>
-              Close Time:
-              {" "}
-              {new Date(
-                item.closeTime
-              ).toLocaleString()}
-            </p>
-
-            <button style={styles.viewBtn}>
-              View Details
-            </button>
-          </div>
-        ))}
+  <AuctionCard
+    key={item.id}
+    item={item}
+  />
+))}
       </div>
     </div>
   );
@@ -109,36 +68,15 @@ const styles = {
   page: {
     minHeight: "100vh",
     background: "#f3f4f6",
-    padding: "30px",
   },
 
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "30px",
-  },
-
-  createBtn: {
-    padding: "10px 15px",
-    marginRight: "10px",
-    background: "#2563eb",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-  },
-
-  logoutBtn: {
-    padding: "10px 15px",
-    background: "#dc2626",
-    color: "white",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
+  error: {
+    color: "red",
+    padding: "20px 30px",
   },
 
   grid: {
+    padding: "30px",
     display: "grid",
     gridTemplateColumns:
       "repeat(auto-fit,minmax(280px,1fr))",
@@ -152,6 +90,7 @@ const styles = {
     boxShadow:
       "0 8px 20px rgba(0,0,0,0.08)",
     cursor: "pointer",
+    transition: "0.2s",
   },
 
   viewBtn: {

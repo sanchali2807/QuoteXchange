@@ -37,7 +37,7 @@ export default function Login() {
       login(res.data.token);
 
       // Redirect to dashboard
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       setError(
         err.response?.data?.message || "Login failed"

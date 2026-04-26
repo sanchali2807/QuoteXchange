@@ -2,8 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/axios";
 
+import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthContext";
 export default function RFQDetails() {
   const { id } = useParams();
+  const { token } = useAuth();
+
+let role = "";
+
+try {
+  if (token) {
+    role = jwtDecode(token).role;
+  }
+} catch (err) {
+  role = "";
+}
 
   const [rfq, setRfq] = useState(null);
   const [bids, setBids] = useState([]);
@@ -17,30 +30,35 @@ export default function RFQDetails() {
   }, []);
 
   const loadDetails = async () => {
-    try {
-      const res = await axios.get(`/rfq/${id}/details`);
+  try {
+    const detailsRes = await axios.get(`/rfq/${id}/details`);
+    const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
 
-      console.log(res.data);
+    setRfq(
+      detailsRes.data.rfq ||
+      detailsRes.data.data ||
+      detailsRes.data
+    );
 
-      setRfq(res.data.rfq || res.data.data || res.data);
+    setBids(
+      boardRes.data.leaderboard ||
+      boardRes.data.data ||
+      boardRes.data ||
+      []
+    );
 
-      setBids(
-        res.data.bids ||
-        res.data.leaderboard ||
-        []
-      );
-    } catch (err) {
-      setError("Failed to load RFQ");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    setError("Failed to load RFQ");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const submitBid = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post(`/bid/${id}`, {
+      await axios.post(`/rfq/${id}/bids`, {
         totalPrice: price,
       });
 
@@ -51,6 +69,15 @@ export default function RFQDetails() {
     }
   };
 
+  const getLiveStatus = () => {
+  const now = new Date();
+  const end = new Date(rfq.endTime);
+  const forced = new Date(rfq.forcedCloseTime);
+
+  if (now > forced) return "FORCED CLOSED";
+  if (now > end) return "CLOSED";
+  return "ACTIVE";
+};
   if (loading) return <p>Loading...</p>;
 
   if (error) return <p>{error}</p>;
@@ -66,39 +93,39 @@ export default function RFQDetails() {
         </p>
 
         <p>
-          Status: {rfq.status}
+          Status: {getLiveStatus()}
         </p>
 
         <p>
           Close Time:
           {" "}
           {new Date(
-            rfq.closeTime
+            rfq.endTime
           ).toLocaleString()}
         </p>
       </div>
 
       {/* Submit Bid */}
-      <div style={styles.card}>
-        <h2>Submit New Bid</h2>
+      {role === "supplier" && (
+  <div style={styles.card}>
+    <h2>Submit New Bid</h2>
 
-        <form onSubmit={submitBid}>
-          <input
-            type="number"
-            placeholder="Enter total price"
-            value={price}
-            onChange={(e) =>
-              setPrice(e.target.value)
-            }
-            required
-            style={styles.input}
-          />
+    <form onSubmit={submitBid}>
+      <input
+        type="number"
+        placeholder="Enter total price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        required
+        style={styles.input}
+      />
 
-          <button style={styles.button}>
-            Submit Bid
-          </button>
-        </form>
-      </div>
+      <button style={styles.button}>
+        Submit Bid
+      </button>
+    </form>
+  </div>
+)}
 
       {/* Rankings */}
       <div style={styles.card}>
