@@ -46,4 +46,4 @@ const Bid  = sequelize.define("Bid",{
 
 });
 
-module.exports = {Bid};
+module.exports = Bid;

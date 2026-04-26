@@ -26,4 +26,4 @@ const ActivityLog = sequelize.define("ActivityLog" , {
   }
 });
 
-module.exports ={ ActivityLog} ; 
+module.exports = ActivityLog ; 

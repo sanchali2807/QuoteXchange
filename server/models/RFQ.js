@@ -71,4 +71,4 @@ const RFQ = sequelize.define("RFQ",{
   }
 });
 
-module.exports = {RFQ};
+module.exports = RFQ;
