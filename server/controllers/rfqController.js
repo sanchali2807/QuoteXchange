@@ -68,18 +68,21 @@ if (error) {
     message: error
   });
 }
-    const rfq = await RFQ.create({
-        name,
-        referenceId : generateReferenceId(),
-        startTime,
-        endTime,
-        forcedCloseTime,
-        pickupDate,
-        xMinutes,
-        yMinutes,
-        triggerType,
-        buyerId : req.user.id
-    });
+    const formatDT = (val) =>
+  val ? val.replace("T", " ") + ":00" : null;
+
+const rfq = await RFQ.create({
+  name,
+  referenceId: generateReferenceId(),
+  startTime: formatDT(startTime),
+  endTime: formatDT(endTime),
+  forcedCloseTime: formatDT(forcedCloseTime),
+  pickupDate,
+  xMinutes,
+  yMinutes,
+  triggerType,
+  buyerId: req.user.id
+});
 
     await addLog(
         rfq.id,
@@ -201,7 +204,21 @@ const updateRfq = async(req,res)=>{
                 message: error
             });
             }
-        await rfq.update(req.body);
+        const payload = { ...req.body };
+
+if (payload.startTime)
+  payload.startTime =
+    payload.startTime.replace("T", " ") + ":00";
+
+if (payload.endTime)
+  payload.endTime =
+    payload.endTime.replace("T", " ") + ":00";
+
+if (payload.forcedCloseTime)
+  payload.forcedCloseTime =
+    payload.forcedCloseTime.replace("T", " ") + ":00";
+
+await rfq.update(payload);
         return res.status(200).json({
             success : true,
             message : "Successfully updated!!"
