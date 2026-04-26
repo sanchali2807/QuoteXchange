@@ -1,17 +1,37 @@
 const { RFQ, Bid} = require("../models");
+
+
 const parseLocal = (val) => {
-  const [datePart, timePart] = val.split(" ");
+  if (val instanceof Date) {
+    return new Date(
+      val.getFullYear(),
+      val.getMonth(),
+      val.getDate(),
+      val.getHours(),
+      val.getMinutes(),
+      val.getSeconds()
+    );
+  }
+
+  const s = String(val).replace("T", " ").slice(0, 19);
+
+  const [datePart, timePart] = s.split(" ");
   const [y, m, d] = datePart.split("-").map(Number);
   const [hh, mm, ss] = timePart.split(":").map(Number);
 
   return new Date(y, m - 1, d, hh, mm, ss);
 };
+
 const getAuctionStatus = (rfq) => {
   const now = new Date();
 
   const start = parseLocal(rfq.startTime);
   const close = parseLocal(rfq.endTime);
   const forced = parseLocal(rfq.forcedCloseTime);
+
+  console.log("NOW:", now);
+  console.log("START:", start);
+  console.log("CLOSE:", close);
 
   if (now < start) return "UPCOMING";
 
@@ -21,12 +41,13 @@ const getAuctionStatus = (rfq) => {
     if (close.getTime() === forced.getTime()) {
       return "FORCED CLOSED";
     }
-
     return "EXTENDED";
   }
 
   return "ACTIVE";
 };
+
+
 
 const isInsideTriggerWindow = (rfq) => {
     const now = new Date();
