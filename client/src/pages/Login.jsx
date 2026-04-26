@@ -105,6 +105,7 @@ export default function Login() {
 const styles = {
   page: {
     minHeight: "100vh",
+    borderRadius:"20px",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -115,7 +116,7 @@ const styles = {
   card: {
     width: "400px",
     padding: "35px",
-    borderRadius: "16px",
+    borderRadius: "20px",
     background: "#ffffff",
     boxShadow:
       "0 10px 30px rgba(0,0,0,0.2)",
@@ -123,17 +124,17 @@ const styles = {
 
   title: {
     textAlign: "center",
-    marginBottom: "8px",
+    marginBottom: "20px",
   },
 
   subtitle: {
     textAlign: "center",
-    color: "gray",
+    color: "black",
     marginBottom: "25px",
   },
 
   input: {
-    width: "100%",
+    width: "95%",
     padding: "12px",
     marginBottom: "15px",
     borderRadius: "8px",
@@ -142,7 +143,7 @@ const styles = {
   },
 
   button: {
-    width: "100%",
+    width: "102%",
     padding: "12px",
     border: "none",
     borderRadius: "8px",
@@ -150,6 +151,7 @@ const styles = {
     color: "white",
     fontSize: "16px",
     cursor: "pointer",
+  
   },
 
   error: {
