@@ -24,7 +24,7 @@ app.use(cors({
   credentials: true
 }));
 
-app.options("*", cors());
+app.options(/.*/, cors());
 // app.use(cors({
 //   origin: "https://quote-xchange.vercel.app",
 //   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
