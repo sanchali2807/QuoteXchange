@@ -33,7 +33,7 @@ const PORT = process.env.PORT||8300;
 const startServer = async()=>{
     try{
         // first sequilize connection authentication
-        await sequilize.authenticate();
+        await sequelize.authenticate();
         console.log("Database Connected");
 
         await sequelize.sync()
