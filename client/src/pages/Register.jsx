@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "../api/axios";
 import BackButton from "../components/BackButton";
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 export default function Register() {
   const navigate = useNavigate();
-const { login } = useContext(AuthContext);
+const { login } = useAuth();
   const [form, setForm] = useState({
     name: "",
     email: "",
