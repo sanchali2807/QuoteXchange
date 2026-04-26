@@ -1,23 +1,30 @@
 const { RFQ, Bid} = require("../models");
 
-const getAuctionStatus=(rfq)=>{
-    const now = new Date();
-    const start = new Date(rfq.startTime);
-    const close = new Date(rfq.endTime);
-    const forcedClose = new Date(rfq.forcedCloseTime);
+const getAuctionStatus = (rfq) => {
+  const now = new Date();
 
-    if (now < start) return "UPCOMING";
-    if(now > forcedClose){
-        return "FORCED CLOSED";
-    }
-    else if(now > close){
-        return "CLOSED";
-    }
-    else{
-        return "ACTIVE";
-    }
-    
-}
+  const start = new Date(rfq.startTime);
+  const close = new Date(rfq.endTime);
+  const forcedClose = new Date(rfq.forcedCloseTime);
+
+  if (now.getTime() < start.getTime()) {
+    return "UPCOMING";
+  }
+
+  if (now.getTime() >= start.getTime() &&
+      now.getTime() <= close.getTime()) {
+    return "ACTIVE";
+  }
+
+  if (now.getTime() > close.getTime() &&
+      now.getTime() <= forcedClose.getTime()) {
+    return "EXTENDED";
+  }
+
+  return "CLOSED";
+};
+
+
 const isInsideTriggerWindow = (rfq) => {
     const now = new Date();
     const close = new Date(rfq.endTime);
