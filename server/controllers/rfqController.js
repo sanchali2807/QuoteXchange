@@ -194,7 +194,7 @@ const updateRfq = async(req,res)=>{
             })
         }
         // rfq contains the id generated row and we chdck that rows buyeriD
-        if(rfq.buyerId !== req.user.id){
+        if (Number(rfq.buyerId) !== Number(req.user.id)){
             return res.status(403).json({
                 success : false,
                 message : "Not your Rfq to update"
