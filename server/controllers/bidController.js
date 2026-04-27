@@ -95,11 +95,16 @@ if (now >= triggerStart && now <= closeTime) {
     proposedClose.getTime() >=
     forcedClose.getTime()
   ) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Bid rejected. Auction cannot extend beyond forced close time."
-    });
+    await rfq.update({
+  endTime: rfq.forcedCloseTime,
+  wasExtended: true
+});
+
+return res.status(400).json({
+  success: false,
+  message:
+    "Bid rejected. Auction reached forced close time."
+});
   }
 }
 
