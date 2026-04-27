@@ -87,7 +87,7 @@ const styles = {
 
   badge: {
   color: "white",
-  padding: "8px 14px",
+  padding: "8px 10px",
   borderRadius: "999px",
   fontSize: "12px",
   fontWeight: "bold",
