@@ -21,6 +21,25 @@ export default function EditRFQ() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+const { token } = useAuth();
+
+let userId = null;
+
+try {
+  if (token) {
+    userId = jwtDecode(token).id;
+  }
+} catch {err}{
+  userId = null;
+}
+
+useEffect(() => {
+  if (!rfq) return;
+
+  if (Number(rfq.buyerId) !== Number(userId)) {
+    navigate("/");
+  }
+}, [rfq, userId]);
 
   useEffect(() => {
     loadRFQ();
