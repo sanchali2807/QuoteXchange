@@ -73,11 +73,12 @@ const styles = {
   },
 
   topRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: "12px",
-    gap: "10px",
-  },
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "flex-start",
+  marginBottom: "12px",
+  gap: "10px",
+},
 
   title: {
     margin: 0,
@@ -85,12 +86,17 @@ const styles = {
   },
 
   badge: {
-    color: "white",
-    padding: "6px 10px",
-    borderRadius: "999px",
-    fontSize: "12px",
-    fontWeight: "bold",
-  },
+  color: "white",
+  padding: "8px 14px",
+  borderRadius: "999px",
+  fontSize: "12px",
+  fontWeight: "bold",
+  whiteSpace: "nowrap",
+  height: "fit-content",
+  alignSelf: "flex-start",
+  minWidth: "90px",
+  textAlign: "center",
+},
 
   button: {
     marginTop: "18px",
