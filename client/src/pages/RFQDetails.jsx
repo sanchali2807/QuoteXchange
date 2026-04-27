@@ -10,13 +10,17 @@ export default function RFQDetails() {
   const { token } = useAuth();
 
 let role = "";
+let userId = null;
 
 try {
   if (token) {
-    role = jwtDecode(token).role;
+    const decoded = jwtDecode(token);
+    role = decoded.role;
+    userId = decoded.id;
   }
 } catch (err) {
   role = "";
+  userId = null;
 }
 
   const [rfq, setRfq] = useState(null);
@@ -166,14 +170,15 @@ const loadHistory = async () => {
   <div style={styles.topBar}>
     <h1>{rfq.name}</h1>
 
-    {role === "buyer" && (
-      <button
-        style={styles.editBtn}
-        onClick={() => navigate(`/edit-rfq/${id}`)}
-      >
-        Edit RFQ
-      </button>
-    )}
+   {role === "buyer" &&
+ Number(userId) === Number(rfq.buyerId) && (
+  <button
+    style={styles.editBtn}
+    onClick={() => navigate(`/edit-rfq/${id}`)}
+  >
+    Edit RFQ
+  </button>
+)}
   </div>
 
   <p>Ref ID: {rfq.referenceId}</p>
