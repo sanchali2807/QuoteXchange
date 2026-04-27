@@ -7,7 +7,8 @@
 
 const { Model } = require("sequelize");
 const {Bid,RFQ,User} = require("../models");
-const {getAuctionStatus,checkAndExtendAuction}= require("../services/auctionService");
+const {getAuctionStatus,checkAndExtendAuction, parseLocal,
+  getISTNow}= require("../services/auctionService");
 const {buildLeaderboard} = require("../services/LeaderboardService")
 const {addLog} = require("../services/logService");
 // const { USE } = require("sequelize/lib/index-hints");
@@ -67,6 +68,41 @@ if (
             message: "Charges cannot be negative"
         });
         }
+
+        const now = getISTNow();
+
+const closeTime = parseLocal(rfq.endTime);
+const forcedClose = parseLocal(rfq.forcedCloseTime);
+
+const triggerWindow = Number(rfq.xMinutes);
+const extensionDuration = Number(rfq.yMinutes);
+
+const triggerStart = new Date(
+  closeTime.getTime() - triggerWindow * 60 * 1000
+);
+
+// If bid is inside trigger window
+if (now >= triggerStart && now <= closeTime) {
+
+  const proposedClose = new Date(closeTime);
+
+  proposedClose.setMinutes(
+    proposedClose.getMinutes() + extensionDuration
+  );
+
+  // If extension reaches or crosses forced close
+  if (
+    proposedClose.getTime() >=
+    forcedClose.getTime()
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Bid rejected. Auction cannot extend beyond forced close time."
+    });
+  }
+}
+
 
         //old board
         const oldBoard = await buildLeaderboard(rfq.id);

@@ -1,6 +1,5 @@
 const { RFQ } = require("../models");
 
-/* ---------------- HELPERS ---------------- */
 
 const parseLocal = (val) => {
   const s = String(val).replace("T", " ").slice(0, 19);
@@ -26,7 +25,7 @@ const fixIST = (val) => {
   return d;
 };
 
-/* ---------------- STATUS ---------------- */
+
 
 const getAuctionStatus = (rfq) => {
   const now = getISTNow();
@@ -50,7 +49,7 @@ const getAuctionStatus = (rfq) => {
   return "ACTIVE";
 };
 
-/* ---------------- TRIGGER WINDOW ---------------- */
+
 
 const isInsideTriggerWindow = (rfq) => {
   const now = getISTNow();
@@ -66,7 +65,7 @@ const isInsideTriggerWindow = (rfq) => {
   return diffTime <= Number(rfq.xMinutes) && diffTime >= 0;
 };
 
-/* ---------------- EXTENSION ---------------- */
+
 
 const checkAndExtendAuction = async (
   rfqId,
@@ -140,6 +139,9 @@ const checkAndExtendAuction = async (
 };
 
 module.exports = {
+  parseLocal,
+  getISTNow,
+  fixIST,
   getAuctionStatus,
   checkAndExtendAuction,
 };
