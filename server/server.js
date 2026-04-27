@@ -55,7 +55,7 @@ app.use("/api/rfq", rfqRoutes);
 app.use("/api/rfq", bidRoutes);
 app.use("/api/rfq", logRoutes);
 
-const PORT = process.env.PORT || 8300;
+const PORT = process.env.PORT || 8080;
 
 async function startServer() {
   try {
