@@ -36,15 +36,17 @@ const getAuctionStatus = (rfq) => {
 
   if (now < start) return "UPCOMING";
 
+  // Only when DB values were updated to forced close
+  if (
+    rfq.wasExtended &&
+    close.getTime() === forced.getTime()
+  ) {
+    return "FORCED CLOSED";
+  }
+
   if (now > close) return "CLOSED";
 
-  if (rfq.wasExtended) {
-    if (close.getTime() === forced.getTime()) {
-      return "FORCED CLOSED";
-    }
-
-    return "EXTENDED";
-  }
+  if (rfq.wasExtended) return "EXTENDED";
 
   return "ACTIVE";
 };
