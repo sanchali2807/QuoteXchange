@@ -8,7 +8,7 @@
 const { Model } = require("sequelize");
 const {Bid,RFQ,User} = require("../models");
 const {getAuctionStatus,checkAndExtendAuction, parseLocal,
-  getISTNow}= require("../services/auctionService");
+  getISTNow,fixIST}= require("../services/auctionService");
 const {buildLeaderboard} = require("../services/LeaderboardService")
 const {addLog} = require("../services/logService");
 // const { USE } = require("sequelize/lib/index-hints");
@@ -96,7 +96,7 @@ if (now >= triggerStart && now <= closeTime) {
     forcedClose.getTime()
   ) {
     await rfq.update({
-  endTime: rfq.forcedCloseTime,
+  endTime: fixIST(parseLocal(rfq.forcedCloseTime)),
   wasExtended: true
 });
 
