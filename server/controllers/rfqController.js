@@ -7,17 +7,13 @@
 const {RFQ,User,ActivityLog,Bid} = require("../models");
 // const {Op} = require("sequelize");
 const {addLog} = require("../services/logService");
-const { getAuctionStatus } = require("../services/auctionService");
+const { getAuctionStatus,fixIST } = require("../services/auctionService");
 const { buildLeaderboard } = require("../services/LeaderboardService");
 const generateReferenceId=()=>{
     return "RFQ - " + Date.now();
     // Date.now is used because Returns current timestamp in milliseconds 
 }
-const fixIST = (val) => {
-  const d = new Date(val);
-  d.setMinutes(d.getMinutes() - 330);
-  return d;
-};
+
 const validateRfqInput = ({
   name,
   startTime,

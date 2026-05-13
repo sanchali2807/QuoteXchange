@@ -11,7 +11,6 @@ const {getAuctionStatus,checkAndExtendAuction, parseLocal,
   getISTNow,fixIST}= require("../services/auctionService");
 const {buildLeaderboard} = require("../services/LeaderboardService")
 const {addLog} = require("../services/logService");
-// const { USE } = require("sequelize/lib/index-hints");
 
 // SUBMIT BID
 const createBid = async (req,res) =>{

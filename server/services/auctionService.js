@@ -25,8 +25,6 @@ const fixIST = (val) => {
   return d;
 };
 
-
-
 const getAuctionStatus = (rfq) => {
   const now = getISTNow();
 

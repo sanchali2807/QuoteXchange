@@ -33,7 +33,7 @@ app.options(/.*/, cors());
 // }));
 
 
-app.use(express.json());
+app.use(express.json());// converts to Js object
 
 app.get("/", (req, res) => {
   res.send("RFQ website is running");

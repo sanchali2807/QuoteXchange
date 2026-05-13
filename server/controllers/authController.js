@@ -3,8 +3,6 @@ const generateToken = require("../utils/token");
 const {User} = require("../models")
 
 const register = async(req,res)=>{
-    console.log("REGISTER HIT");
-  console.log("BODY:", req.body);
     try{
         const {name , email , password , role , companyName} = req.body;
 
