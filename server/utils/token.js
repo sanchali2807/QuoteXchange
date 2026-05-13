@@ -13,7 +13,7 @@ const generateToken = (user)=>{
         process.env.JWT_SECRET,
         // OPTIONS
         {
-            expiresIn : "7d"
+            expiresIn : "2m"
         }
     );
 }
