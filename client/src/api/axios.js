@@ -7,15 +7,27 @@ const api = axios.create({
 });
 console.log(import.meta.env.VITE_API_URL);
 // interceptor means Run some code before every request goes to backend
-api.interceptors.request.use((config)=>{
-    const token = localStorage.getItem("token");
-    // Only add auth header when user is logged in.
-    if(token){
-        // Add JWT header
-        config.headers.Authorization = `bearer ${token}`
-    }
-    return config;
-})
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
 
+  const publicRoutes = ["/login", "/register"];
+
+  const isPublic = publicRoutes.some((route) =>
+    config.url.includes(route)
+  );
+
+  if (token && !isPublic) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+api.interceptors.response.use((res)=>res,(err)=>{
+    if(err.response?.status === 401){
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+    }
+    return Promise.reject(error);
+})
 
 export default api;
