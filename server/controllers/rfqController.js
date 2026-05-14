@@ -61,9 +61,9 @@ const createRfq = async(req,res)=>{
         } = req.body;
 
        const error = validateRfqInput(req.body);
-       console.log(req.body.startTime);
-console.log(req.body.endTime);
-console.log(req.body.forcedCloseTime);
+//        console.log(req.body.startTime);
+// console.log(req.body.endTime);
+// console.log(req.body.forcedCloseTime);
 
 if (error) {
   return res.status(400).json({
@@ -86,9 +86,9 @@ forcedCloseTime: fixIST(forcedCloseTime),
   triggerType,
   buyerId: req.user.id
 });
-console.log("SAVED START:", rfq.startTime);
-console.log("SAVED END:", rfq.endTime);
-console.log("SAVED FORCED:", rfq.forcedCloseTime);
+// console.log("SAVED START:", rfq.startTime);
+// console.log("SAVED END:", rfq.endTime);
+// console.log("SAVED FORCED:", rfq.forcedCloseTime);
 
     await addLog(
         rfq.id,
@@ -148,7 +148,7 @@ const getAllRfq = async(req,res)=>{
     }
 }
 
-// GET ONE RFQQs
+// GET ONE RFQs
 
 const getRfqById = async (req,res)=>{
     try{
@@ -190,8 +190,8 @@ const updateRfq = async(req,res)=>{
             })
         }
         // rfq contains the id generated row and we chdck that rows buyeriD
-        console.log("RFQ owner:", rfq.buyerId);
-console.log("Current user:", req.user.id);
+        // console.log("RFQ owner:", rfq.buyerId);
+// console.log("Current user:", req.user.id);
         if (Number(rfq.buyerId) !== Number(req.user.id)){
             return res.status(403).json({
                 success : false,
@@ -271,7 +271,7 @@ const deleteRfq = async (req,res)=>{
 //get auction listings
 const getAuctionListings = async(req,res)=>{
     try{
-         console.log("STEP 1");
+        //  console.log("STEP 1");
         const rfqs = await RFQ.findAll({
             order :[["createdAt","DESC"]]
         })

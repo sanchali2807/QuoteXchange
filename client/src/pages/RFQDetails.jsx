@@ -73,7 +73,7 @@ const loadLogs = async () => {
     const detailsRes = await axios.get(`/rfq/${id}/details`);
     const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
     // const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
-console.log("Leaderboard:", boardRes.data);
+// console.log("Leaderboard:", boardRes.data);
 
     setRfq(
       detailsRes.data.rfq ||
@@ -334,7 +334,7 @@ const loadHistory = async () => {
         </span>
 
         <span>
-          {log.message || log.reason || ""}
+          {log.message || log.meta || ""}
         </span>
       </div>
     ))

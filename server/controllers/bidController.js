@@ -114,7 +114,7 @@ return res.status(400).json({
             item => item.supplierId
         )
         
-console.log(" RANK:", oldRank);
+// console.log(" RANK:", oldRank);
         const prevL1 = oldBoard.length > 0 ? oldBoard[0].supplierId : null;
 
         // save bid 
