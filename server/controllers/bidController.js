@@ -17,8 +17,8 @@ const createBid = async (req,res) =>{
     try{
         // will need to pass the rfq id
         const rfq = await RFQ.findByPk(req.params.id);
-        console.log("params =", req.params);
-console.log("id =", req.params.id);
+        // console.log("params =", req.params);
+// console.log("id =", req.params.id);
         if(!rfq){
             return res.status(404).json({
                 success : false,

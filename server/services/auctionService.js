@@ -19,6 +19,7 @@ const getISTNow = () => {
   );
 };
 
+//before saving to Db 
 const fixIST = (val) => {
   const d = new Date(val);
   d.setMinutes(d.getMinutes() - 330);

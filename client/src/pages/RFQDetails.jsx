@@ -275,8 +275,7 @@ const loadHistory = async () => {
               </span>
 
               <span>
-                {bid.companyName ||
-                  "Supplier"}
+                {bid.companyName}
               </span>
             </div>
           ))
