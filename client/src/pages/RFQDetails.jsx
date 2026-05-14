@@ -275,7 +275,8 @@ const loadHistory = async () => {
               </span>
 
               <span>
-                {bid.companyName}
+                {bid.User?.companyName ||
+                  "Supplier"}
               </span>
             </div>
           ))
@@ -299,11 +300,9 @@ const loadHistory = async () => {
   history.map((bid, index) => (
     <div key={index} style={styles.bidRow}>
       <span>
-        {bid.companyName ||
-         bid.name ||
-         bid.supplierName ||
-         `Supplier ${bid.supplierId || ""}`}
-      </span>
+                {bid.User?.companyName ||
+                  "Supplier"}
+              </span>
 
       <span>
         ₹{bid.totalPrice}
