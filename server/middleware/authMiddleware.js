@@ -11,7 +11,7 @@ try{
 // console.log("HEADER =", header);
 // console.log("TYPE =", typeof header);
 // console.log("CHARS =", [...header]);
-    if(!header || !header.startsWith("bearer ")){
+    if(!header || !header.toLowerCase().startsWith("bearer ")){
         return res.status(401).json({
             success : false,
             message : "No Token Provided or the syntax is wrong"
