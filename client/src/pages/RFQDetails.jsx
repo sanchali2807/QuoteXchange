@@ -334,8 +334,11 @@ const loadHistory = async () => {
         </span>
 
         <span>
-          {log.message || log.meta.triggerType || ""}
-        </span>
+  {log.message}
+
+  {log.meta?.triggerType &&
+    ` (${log.meta.triggerType})`}
+</span>
       </div>
     ))
   )}
