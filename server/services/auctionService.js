@@ -1,12 +1,16 @@
 const { RFQ } = require("../models");
 
-// Sequelize now returns real UTC Date objects (no timezone/dateStrings config).
-// parseLocal: just ensure we have a Date — no string manipulation needed.
+
 const parseLocal = (val) => {
-  return new Date(val);
+  const s = String(val).replace("T", " ").slice(0, 19);
+
+  const [datePart, timePart] = s.split(" ");
+  const [y, m, d] = datePart.split("-").map(Number);
+  const [hh, mm, ss] = timePart.split(":").map(Number);
+
+  return new Date(y, m - 1, d, hh, mm, ss);
 };
 
-// Returns current time as an IST Date (for comparisons against IST-based auction windows)
 const getISTNow = () => {
   return new Date(
     new Date().toLocaleString("en-US", {
@@ -15,14 +19,15 @@ const getISTNow = () => {
   );
 };
 
-// fixIST: previously subtracted 330 min to convert IST→UTC before saving.
-// Now Sequelize handles UTC natively — just return the value as-is.
 const fixIST = (val) => {
-  return new Date(val);
+  const d = new Date(val);
+  d.setMinutes(d.getMinutes() - 330);
+  return d;
 };
 
 const getAuctionStatus = (rfq) => {
   const now = getISTNow();
+
   const start = parseLocal(rfq.startTime);
   const close = parseLocal(rfq.endTime);
   const forced = parseLocal(rfq.forcedCloseTime);
@@ -38,13 +43,18 @@ const getAuctionStatus = (rfq) => {
   }
 
   if (now > close) return "CLOSED";
+
   if (rfq.wasExtended) return "EXTENDED";
+
   return "ACTIVE";
 };
+
+
 
 const isInsideTriggerWindow = (rfq) => {
   const now = getISTNow();
   const close = parseLocal(rfq.endTime);
+
   const diffTime = (close - now) / (1000 * 60);
 
   console.log("NOW:", now);
@@ -54,6 +64,8 @@ const isInsideTriggerWindow = (rfq) => {
 
   return diffTime <= Number(rfq.xMinutes) && diffTime >= 0;
 };
+
+
 
 const checkAndExtendAuction = async (
   rfqId,
@@ -79,6 +91,7 @@ const checkAndExtendAuction = async (
 
   const oldOrder = oldRank.join(",");
   const newOrder = newRank.join(",");
+
   const orderChanged = oldOrder !== newOrder;
   const l1Changed = prevL1 !== currL1;
 
@@ -88,15 +101,19 @@ const checkAndExtendAuction = async (
     case "BID_LAST_X":
       shouldExtend = true;
       break;
+
     case "RANK_CHANGE":
       shouldExtend = orderChanged;
       break;
+
     case "L1_CHANGE":
       shouldExtend = l1Changed;
       break;
+
     case "ANY":
       shouldExtend = true;
       break;
+
     default:
       shouldExtend = false;
   }
@@ -104,6 +121,7 @@ const checkAndExtendAuction = async (
   if (!shouldExtend) return false;
 
   let newClose = parseLocal(rfq.endTime);
+
   newClose.setMinutes(
     newClose.getMinutes() + Number(rfq.yMinutes)
   );
@@ -113,7 +131,7 @@ const checkAndExtendAuction = async (
   }
 
   await rfq.update({
-    endTime: fixIST(newClose),   // fixIST is now a no-op passthrough
+    endTime: fixIST(newClose),
     wasExtended: true,
   });
 
