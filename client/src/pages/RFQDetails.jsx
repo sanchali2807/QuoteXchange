@@ -73,6 +73,7 @@ const loadDetails = async () => {
     const res = await axios.get(`/rfq/${id}/details`);
 
     setRfq(
+      // fallback chain becuase some api return api.data.rfq or api.data.data or api.data 
       res.data.rfq ||
       res.data.data ||
       res.data

@@ -36,6 +36,10 @@ export default function Profile() {
           <span style={styles.label}>Email</span>
           <span>{user.email || "N/A"}</span>
         </div>
+        <div style={styles.row}>
+          <span style={styles.label}>Company</span>
+          <span>{user.companyName || "N/A"}</span>
+        </div>
 
         <div style={styles.row}>
           <span style={styles.label}>Role</span>

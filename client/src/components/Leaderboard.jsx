@@ -20,7 +20,7 @@ export default function Leaderboard({ bids = [] }) {
             </span>
 
             <span>
-              {bid.companyName ||
+              {bid.User.companyName ||
                 "Supplier"}
             </span>
           </div>
