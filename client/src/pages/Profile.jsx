@@ -1,10 +1,10 @@
 import { jwtDecode } from "jwt-decode";
-import { useAuth,useState } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import BackButton from "../components/BackButton";
 import axios from "../api/axios";
+import { useState ,useEffect} from "react";
 export default function Profile() {
   const [user, setUser] = useState({});
-
   useEffect(() => {
     fetchProfile();
   }, []);
