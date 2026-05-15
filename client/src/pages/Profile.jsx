@@ -1,5 +1,5 @@
 import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../context/AuthContext";
+import { useAuth,useState } from "../context/AuthContext";
 import BackButton from "../components/BackButton";
 import axios from "../api/axios";
 export default function Profile() {
