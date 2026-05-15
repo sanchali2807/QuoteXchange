@@ -68,23 +68,18 @@ const loadLogs = async () => {
     console.log("Logs failed");
   }
 };
-  const loadDetails = async () => {
+const loadDetails = async () => {
   try {
-    const detailsRes = await axios.get(`/rfq/${id}/details`);
-    const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
-    // const boardRes = await axios.get(`/rfq/${id}/leaderboard`);
-// console.log("Leaderboard:", boardRes.data);
+    const res = await axios.get(`/rfq/${id}/details`);
 
     setRfq(
-      detailsRes.data.rfq ||
-      detailsRes.data.data ||
-      detailsRes.data
+      res.data.rfq ||
+      res.data.data ||
+      res.data
     );
 
     setBids(
-      boardRes.data.leaderboard ||
-      boardRes.data.data ||
-      boardRes.data ||
+      res.data.leaderboard ||
       []
     );
 

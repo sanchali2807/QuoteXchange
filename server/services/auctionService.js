@@ -58,10 +58,10 @@ const isInsideTriggerWindow = (rfq) => {
 
   const diffTime = (close - now) / (1000 * 60);
 
-  console.log("NOW:", now);
-  console.log("CLOSE:", close);
-  console.log("DIFF MIN:", diffTime);
-  console.log("X MIN:", rfq.xMinutes);
+  // console.log("NOW:", now);
+  // console.log("CLOSE:", close);
+  // console.log("DIFF MIN:", diffTime);
+  // console.log("X MIN:", rfq.xMinutes);
 
   return diffTime <= Number(rfq.xMinutes) && diffTime >= 0;
 };

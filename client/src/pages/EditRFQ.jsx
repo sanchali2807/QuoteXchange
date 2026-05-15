@@ -29,7 +29,7 @@ try {
   if (token) {
     userId = jwtDecode(token).id;
   }
-} catch {err}{
+} catch (err){
   userId = null;
 }
 
