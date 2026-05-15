@@ -123,12 +123,25 @@ const login = async(req,res)=>{
     }
 }
 
-const me = (req,res) =>{
+const me = async (req, res) => {
+  try {
+
+    const user = await User.findByPk(req.user.id, {
+      attributes: ["id", "name", "email", "role", "companyName"]
+    });
+
     return res.status(200).json({
-        success : true,
-        message : req.user
-    })
-}
+      success: true,
+      user
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
 
 module.exports = {register,login,me};
 

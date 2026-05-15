@@ -2,18 +2,23 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
 import BackButton from "../components/BackButton";
 export default function Profile() {
-  const { token } = useAuth();
+  const [user, setUser] = useState({});
 
-  let user = {};
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
-  try {
-    if (token) {
-      user = jwtDecode(token);
+  const fetchProfile = async () => {
+    try {
+
+      const res = await api.get("/auth/me");
+
+      setUser(res.data.user);
+
+    } catch (err) {
+      console.log(err);
     }
-  } catch (err) {
-    user = {};
-  }
-
+  };
   return (
     <div style={styles.page}>
       <div style={styles.card}>
