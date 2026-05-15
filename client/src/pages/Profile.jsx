@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
 import BackButton from "../components/BackButton";
+import axios from "../api/axios";
 export default function Profile() {
   const [user, setUser] = useState({});
 
@@ -11,7 +12,7 @@ export default function Profile() {
   const fetchProfile = async () => {
     try {
 
-      const res = await api.get("/auth/me");
+      const res = await axios.get("/auth/me");
 
       setUser(res.data.user);
 
