@@ -1,22 +1,16 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
 import Navbar from "./Navbar";
 
 export default function ProtectedRoute({
   children,
   allowedRoles = [],
 }) {
-  const { token } = useAuth();
+  const { token,role } = useAuth();
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
-
-  try {
-    const decoded = jwtDecode(token);
-    const role = decoded.role;
-
     if (
       allowedRoles.length > 0 &&
       !allowedRoles.includes(role)
@@ -30,7 +24,4 @@ export default function ProtectedRoute({
         {children}
       </>
     );
-  } catch (err) {
-    return <Navigate to="/login" replace />;
-  }
 }
