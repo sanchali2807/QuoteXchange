@@ -1,26 +1,12 @@
 import { createContext, useContext, useState } from "react";
-import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
-
-// decode once, return the fields we need
-const decodeToken = (token) => {
-  if (!token) return { role: null, userId: null };
-  try {
-    const decoded = jwtDecode(token);
-    return { role: decoded.role, userId: decoded.id };
-  } catch {
-    return { role: null, userId: null };
-  }
-};
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(
     localStorage.getItem("token") || null
   );
 
-  // derived from token — no extra state needed
-  const { role, userId } = decodeToken(token);
 
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
@@ -33,7 +19,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ token, role, userId, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

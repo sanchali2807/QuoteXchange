@@ -1,9 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth , } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { token, logout ,role} = useAuth();
+  const { token, logout } = useAuth();
+
+  let role = "";
+
+  try {
+    if (token) {
+      const decoded = jwtDecode(token);
+      role = decoded.role;
+    }
+  } catch (err) {
+    role = "";
+  }
 
   const handleLogout = () => {
     logout();
