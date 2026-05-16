@@ -22,7 +22,7 @@ try{
     // here the token passed is encoded with secret key and again verified with the signature
     const decoded = jwt.verify(
         token , 
-        process.env.JWT_SECRET
+        process.env.JWT_SECRETq
     )
     req.user = decoded;
     next();

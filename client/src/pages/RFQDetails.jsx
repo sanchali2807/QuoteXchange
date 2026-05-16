@@ -2,27 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams,useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import BackButton from "../components/BackButton";
-import { jwtDecode } from "jwt-decode";
 import { useAuth } from "../context/AuthContext";
 export default function RFQDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { token } = useAuth();
-
-let role = "";
-let userId = null;
-
-try {
-  if (token) {
-    const decoded = jwtDecode(token);
-    role = decoded.role;
-    userId = decoded.id;
-  }
-} catch (err) {
-  role = "";
-  userId = null;
-}
-
+  const { role, userId } = useAuth();
   const [rfq, setRfq] = useState(null);
   const [bids, setBids] = useState([]);
 const [form, setForm] = useState({
@@ -73,7 +57,7 @@ const loadDetails = async () => {
     const res = await axios.get(`/rfq/${id}/details`);
 
     setRfq(
-      // fallback chain becuase some api return api.data.rfq or api.data.data or api.data 
+      // fallback chain becuase some api return api.data.rfq or api.data.data or api.data
       res.data.rfq ||
       res.data.data ||
       res.data
